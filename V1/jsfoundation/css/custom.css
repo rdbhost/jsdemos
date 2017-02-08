@@ -1,0 +1,115 @@
+body {color: #494441; font-family:Verdana;}
+
+header.top {margin:0 0 30px 0; padding:0; height: 45px; background-color: #494441;}
+.top-bar .name h1 {padding-right: 30px; color: #ffffff;}
+
+p.createKeyTable {padding: 11px 0;}
+
+a {color: #494441; font-weight: bold;}
+a:hover {color: #322E2C; text-decoration: underline;}
+
+
+h2 {color: #494441; font-size: 24px;}
+h3 {color: #494441; font-size: 22px;}
+h4 {color: #494441; font-size: 20px;}
+h5 {color: #494441; font-size: 18px;}
+
+
+.row {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  max-width: 90%;}
+
+.frontPage {position: relative; height: 320px; padding-bottom: 50px; font-size: 14px;}
+.bottomButtons {position: absolute; bottom: 0; left: 15px; height: 30px; width: 100%;}
+
+.top-bar {background: #494441;}
+    .top-bar.expanded .title-area {
+      background: #494441; }
+    .top-bar-section li a:not(.button) {
+      padding: 0 15px;
+      line-height: 45px;
+      background: #494441; color: #ffffff;}
+
+      .top-bar-section li a:not(.button):hover {
+        background: #383838; }
+    .top-bar-section > ul > .divider, .top-bar-section > ul > [role="separator"] {
+      border-bottom: none;
+      border-top: none;
+      border-right: solid 1px #383838;
+      border-left: solid 1px #383838;
+      clear: none;
+      height: 45px;
+      width: 0px; }
+
+.panel {background-color: #E2E2E2; border: 1px #494441 solid;}
+.panel h1 {color: #494441 !important; font-size: 34px;}
+.panel p {color: #494441 !important; font-size: 18px; line-height: 22px; margin:0; padding: 0 0 15px 0;}
+
+hr {
+  border: solid #494441;
+  border-width: 1px 0 0 0;
+  clear: both;
+  margin: 1.25em 0 1.1875em;
+  height: 0;}
+
+.wine {background-color: #494441; color: #ffffff; border-color: #494441;}
+.wine:hover {background-color: #383838;}
+
+button, .button {
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+textarea {
+  font-family: inherit;
+  border: 1px solid #494441;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.75);
+  display: block;
+  font-size: 0.875em;
+  margin: 0 0 1em 0;
+  padding: 0.5em;
+  height: 2.3125em;
+  width: 100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: -webkit-box-shadow 0.45s, border-color 0.45s ease-in-out;
+  -moz-transition: -moz-box-shadow 0.45s, border-color 0.45s ease-in-out;
+  transition: box-shadow 0.45s, border-color 0.45s ease-in-out; }
+
+textarea {height:150px;}
+
+label {
+  color: #494441;
+  font-weight: 900;}
+
+fieldset {
+  border: solid 1px #494441;
+  padding: 1.25em;
+  margin: 1.125em 0; }
+
+ul, ol {
+  margin-left: 20px; }
+
+
+
+
+

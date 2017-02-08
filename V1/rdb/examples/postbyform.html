@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<!--<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">-->
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RdbHost Plugin $.postByForm example</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/main.css" rel="stylesheet" />
+  <script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script language="javascript" type="text/javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/jquery.rdbhost.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/json2.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      var domain = 'www.rdbhost.com';
+      if (window.location.hostname.indexOf('dev') > -1)
+        domain = 'dev.rdbhost.com';
+      var q = 'SELECT * FROM capitols';
+      $.rdbHostConfig({ domain: domain });
+
+      function handle_error(err) {
+        alert('errback called ' + err);
+        $.postFormData($('#demo-form'),
+            {
+              'userName': 'p0000000014',
+              'authcode': '-',
+              'callback': repopulate,
+              'errback': handle_error
+            });
+      }
+
+      function repopulate() {
+
+        $('.targets').populateTable({
+          q: q,
+          userName: 'r0000000014',
+          authcode: ''
+        });
+
+        $.postFormData($('#demo-form'),
+           {
+             'userName': 'p0000000014',
+             'authcode': '-',
+             'callback': repopulate,
+             'errback': handle_error
+           });
+      }
+      repopulate();
+
+    })
+    </script>
+</head>
+<body>
+  <div class="container">
+    <h3 class="titleStyle borderB">jQuery.Rdbhost $.postFormData Demo</h3>
+    <p>This table is populated from the database.  Demonstrates generating a table to fill a <i>div</i> and how to submit data from a form to the server.</p>
+    <p>This is a live demo, so go ahead and submit an entry, see the table gain an entry.</p>
+
+    <div class="targets">
+      <pre id="target"></pre>
+    </div>
+
+    <form role="form" action='' method='post' id='demo-form' enctype="multipart/form-data" target="request_target">
+      <div class="form-group">
+        <label for="arg000">City</label>
+        <input type="text" class="form-control" id="arg000" placeholder="City" name="arg000" />
+      </div>
+      <div class="form-group">
+        <label for="arg001">Country</label>
+        <input type="text" class="form-control" id="arg001" placeholder="Country" name="arg001" />
+      </div>
+      <div class="form-group">
+        <label for="arg002">Pop</label>
+        <input type="text" class="form-control" id="arg002" placeholder="Population" name="arg002" />
+      </div>
+      <input type="hidden" name="q" id="q" value="INSERT INTO capitols (city, country, population) VALUES(%s, %s, %s);" />
+      <input type="hidden" name="kw" id="kw" value="postcapitol" />
+      <input type="submit" class="btn myBtn" value="Go" />
+      <a href="../../index.html" class="btn myBtn">Back to Contents</a>
+    </form>
+
+  </div>
+</body>
+</html>

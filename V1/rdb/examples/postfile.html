@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<!--<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">-->
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RdbHost Plugin $.postByForm example</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/main.css" rel="stylesheet" />
+  <script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script language="javascript" type="text/javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/jquery.rdbhost.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/json2.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+
+      var domain = 'www.rdbhost.com';
+      if (window.location.hostname.indexOf('dev') > -1)
+        domain = 'dev.rdbhost.com';
+      $.rdbHostConfig({ domain: domain });
+      function showdump(json) {
+        if (json && json.row_count) {
+          $('#target').html(json.status[0]);
+        }
+        else {
+          alert('no data');
+        }
+      }
+      $.postFormData($('#demo-form'),
+                    {
+                      'userName': 'p0000000014',
+                      'authcode': '-',
+                      'callback': showdump
+                    });
+    })
+    </script>
+</head>
+<body>
+  <div class="container">
+    <h3 class="titleStyle borderB">jQuery.Rdbhost $.postFormData File Upload Demo</h3>
+    <p>This is a live demo, so go ahead and submit an entry, and see the result 'status' value.</p>
+
+    <div class="targets">Result: <span id="target">?</span></div>
+
+    <form role="form" action='' method='post' id='demo-form' enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="arg000">Filename</label>
+        <input type="text" class="form-control" id="arg000" placeholder="Filename" name="arg000" />
+      </div>
+      <div class="form-group">
+        <label for="arg001">Image File</label>
+        <input type="file" id="arg001" name="arg001" />
+        <p class="help-block">Example block-level help text here.</p>
+      </div>
+      <input type="hidden" name="kw" id="kw" value="addpicture" />
+      <input type="hidden" name="q" id="q" value="INSERT INTO pictures (picture_name, picture) VALUES(%s, %s);" />
+      <input type="submit" class="btn myBtn" value="Go" />
+      <a href="../../index.html" class="btn myBtn">Back to Contents</a>
+    </form>
+
+  </div>
+</body>
+</html>

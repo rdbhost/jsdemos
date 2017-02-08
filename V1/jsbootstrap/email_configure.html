@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="fragment" content="!">
+  <meta charset="utf-8">
+  <title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
+  <link href="css/custom.css" rel="stylesheet">
+  <link href="css/content.css" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://www.rdbhost.com/js/html5shiv.js"></script><![endif]-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script src="http://www.rdbhost.com/js/json2.js"></script>
+<!--  <script src="js/jquery.rdbhost.js"></script>-->
+  <script>
+
+    var R = window.Rdbhost;
+
+    function add_status_line(stat) {
+      var $stat = $('<li class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span>~</li>'.replace('~', stat));
+      $('#status').append($stat);
+    }
+
+    $(document).ready(function () {
+
+      $.rdbHostConfig({
+        domain: 'www.rdbhost.com',
+        accountNumber: 14,
+        userName: 'super'
+      });
+
+      var $emailForm = $('#emailapi');
+      $emailForm.submit(function (ev) {
+
+        var svc = $emailForm.find('#emservice').val(),
+                apikey = $emailForm.find('#emapikey').val(),
+                acctemail = $emailForm.find('#acctemail').val(),
+                webmaster = $emailForm.find('#webmaster').val();
+
+        var p = R.setupEmail({
+
+          service: svc,
+          apikey: apikey,
+          acctemail: acctemail,
+          webmaster: webmaster
+        });
+
+        p.done(function (resp) {
+
+          //alert('email apikey added to apis table');
+          add_status_line('email api key added to apis table');
+        });
+        p.fail(function (errArray) {
+
+          //alert('email apikey addition failed! '+errArray[1]);
+          add_status_line('email api key addition failed! ' + errArray[1]);
+        });
+
+        return false;
+      });
+    })
+  </script>
+
+  <!-- Fav and touch icons -->
+  <!--link rel="apple-touch-icon-precomposed" sizes="144x144"
+   href="../assets/ico/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="../assets/ico/favicon.png" -->
+</head>
+
+<body>
+  <nav role="navigation" class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button data-target=".navbar-ex8-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">Rdbhost JavaScript Boilerplate</a>
+      </div>
+      <div class="collapse navbar-collapse navbar-ex8-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Home</a></li>
+          <!-- li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Nav header</a></li>
+              <li><a href="#">Separated link</a></li>
+              <li><a href="#">One more separated link</a></li>
+            </ul>
+          </li -->
+        </ul>
+        <!--<form class="navbar-form navbar-left" role="">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Email">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-default">Sign in</button>
+          </form>-->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit well">
+      <h2>Setup Email</h2>
+
+      <p>
+        This configure page adds an email api key to the APIs table, creating the table if necessary.
+          The <a href="email_preauth.html">email_preauth.html</a> page can then send email using that key,
+          without being able to read the key.  This permits sending email from a JavaScript application,
+          via an authenticated email service, without revealing the email service account keys.
+      </p>
+
+      <!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+    </div>
+
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-sm-4">
+        <h4 class="mb10">Status</h4>
+        <ul id="status" class="listNone"></ul>
+      </div>
+
+      <div class="col-sm-8">
+        <h4 class="mb10">Email Setup Form</h4>
+        <div class="row">
+          <form id="emailapi" method="POST" role="form">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="emservice">Service:</label>
+                <select class="form-control" id="emservice" name="service">
+                  <option value="? undefined:undefined ?"></option>
+                  <option value="yak">Yak</option>
+                  <option value="postmark">Postmark</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="acctemail">Account Email:</label>
+                <input type="email" class="form-control" name="acctemail" id="acctemail" placeholder="Account Email" />
+              </div>
+              <input type="submit" value="Add Entry" class="btn btn-default mb10" />
+            </div>
+
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label for="emapikey">API Key:</label>
+                <input type="text" class="form-control" name="apikey" id="Text2" placeholder="API Key" />
+              </div>
+              <div class="form-group">
+                <label for="webmaster">Webmaster:</label>
+                <input type="text" class="form-control" name="webmaster" id="webmaster" placeholder="Webmaster" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <footer>
+      <p>&copy; David Keeney 2013</p>
+    </footer>
+
+  </div>
+  <!-- /container -->
+
+  <!-- Le javascript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://www.rdbhost.com/vendor/bootstrap/3.0/js/bootstrap.min.js"></script>
+  <!--<script src="http://www.rdbhost.com/js/bootstrap.13.2.js"></script>-->
+
+</body>
+</html>

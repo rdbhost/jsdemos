@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="fragment" content="!">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>RdbHost JSIntro</title>
+  <link href="css/custom.css" rel="stylesheet">
+  <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/json2.js"></script>
+  <script>
+
+    function add_status_line(stat) {
+        var $stat = $('<li>~</li>'.replace('~',stat));
+        $('#status').append($stat);
+    }
+
+    $(document).ready(function () {
+
+        // tell rdbhost module what role and account we are using
+        //
+        $.rdbHostConfig({
+            'userName' : "p0000000014",
+            'authcode' : "",
+            'domain'   : "www.rdbhost.com"
+        });
+
+        var addDVDSQL =         'INSERT INTO sandbox.dvds_jsintro   '+
+                                '   (name, rating) VALUES (%s, %s)';
+        var getDVDListSQL =     'SELECT name, rating FROM sandbox.dvds_jsintro';
+
+        // submit handler for form
+        //
+        $('#add-form').submit(function () {
+            var $form = $('#add-form');
+            var title = $form.find('#title').val();
+            var rating = $form.find('#rating').val();
+            var args = [title, rating];
+            $.postData( {   'q'       : addDVDSQL,
+                            'args'     : args,
+                            'callback' : function () {
+                                  add_status_line('one DVD added')
+                                },
+                            'errback' : function(errObj) {
+                                  alert(errObj[1]);
+                                }
+            });
+            return false;
+        });
+
+       // updater for list
+        //
+        $('#list-btn').click(function () {
+              $('#list').populateTable(getDVDListSQL);
+              return false;
+        });
+    });
+
+
+
+    </script>
+</head>
+<body>
+
+
+
+<div class="formContainer">
+
+  <h1>DVD database status</h1>
+
+	<form action='' method='post' id='add-form' enctype="multipart/form-data" >
+		<p><label>Title</label><input type="text" size="30" id="title" name="title" /></p>
+		<p><label>Rating</label><input type="text" size="30" id="rating" name="rating" /></p>
+		<p><input type="submit" value="add" /></p>
+	</form>
+	<ul id="status"></ul>
+
+    <div style="width:400px; margin:10px; padding:10px;">
+        <a href="#" id="list-btn">Click to list DVDs</a>
+        <table id="list" style="width:400px">
+            <tr><td class="name"></td><td class="rating"></td></tr>
+        </table>
+    </div>
+
+<input type="button" value="Back to Home" class="backHome" onclick="location.href='index.html'" />
+
+  </div>
+</body>
+</html>

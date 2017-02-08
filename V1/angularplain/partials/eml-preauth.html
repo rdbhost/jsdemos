@@ -1,0 +1,19 @@
+<div class="formContainer">
+    <h1>Rdbhost Emailing Demo</h1>
+
+    <!-- this div receives status updates  -->
+    <ul>
+        <li ng-repeat="s in status">{{s}}</li>
+    </ul>
+
+    <p>This demo sends an email to the webmaster of this site.</p>
+
+    <div>
+        <form id='email-body'>
+
+            <p><label>Email</label><textarea rows="5" id="body" class="email" ng-model="emailBody" ></textarea></p>
+
+            <p><input type="submit" value="go" ng-click="sendEmail()" /></p>
+        </form>
+    </div>
+</div>

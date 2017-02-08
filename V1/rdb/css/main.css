@@ -1,0 +1,19 @@
+body {
+  background-color: #DBD1B8; }
+
+.title {
+  font-size: 16px;
+  font-weight: bold; }
+
+.listContent {
+  padding-left: 40px; }
+  .listContent li {
+    list-style: none;
+    margin-bottom: 5px; }
+    .listContent li i {
+      margin-left: -30px;
+      margin-right: 15px;
+      color: #800F23; }
+    .listContent li a {
+      color: #800F23; }
+

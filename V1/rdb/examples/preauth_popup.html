@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preauth Login Popup Demo</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/main.css" rel="stylesheet" />
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <!-- Your project file goes here -->
+  <script language="javascript" src="http://www.rdbhost.com/vendor/yepnope/1.5.4/yepnope.js"></script>
+  <script type="text/javascript" src="../js/jquery.rdbhost.js"></script>
+  <script type="text/javascript" src="../js/jquery.rdbhost.utils.js"></script>
+  <!-- Your tests file goes here -->
+  <script>
+    $(document).ready(function () {
+      $.rdbHostConfig({
+        'accountNumber': 12,
+        'domain': 'dev.rdbhost.com'
+      });
+      $('a').click(function (ev) {
+
+        //$.drawLoginDialog('super login', '', alert);
+        var p = Rdbhost.preauthPostData({ q: 'SELECT 1' });
+        p.then(
+          function (h) {
+            alert(JSON.stringify(h, null, '    '));
+          },
+          function (e) {
+            alert(JSON.stringify(e, null, '    '));
+          });
+        return false;
+      });
+
+      function doform() {
+
+        var q = Rdbhost.preauthPostFormData('form', {});
+        q.then(
+          function (resp) {
+
+            doform();
+            alert(JSON.stringify(resp, null, '    '));
+          },
+          function (e) {
+
+            doform();
+            alert(JSON.stringify(e, null, '    '));
+          });
+      }
+      doform();
+    })
+    </script>
+</head>
+<body>
+  <div class="container">
+    <form role="form" method="POST" id="testform">
+      <input name="q" value="SELECT 2" type="hidden" />
+      <input type="submit" value="form" class="btn myBtn" />
+      <a href="../../index.html" class="btn myBtn">Back to Contents</a>
+      <a href="#" class="btn myBtn">click here for popup.</a>
+    </form>
+  </div>
+</body>
+</html>

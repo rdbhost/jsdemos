@@ -1,0 +1,46 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RdbHost Plugin .populateTable div Demo</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/main.css" rel="stylesheet" />
+
+  <script language="javascript" type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script language="javascript" type="text/javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/jquery.rdbhost.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/json2.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var domain = 'www.rdbhost.com';
+      if (window.location.hostname.indexOf('dev') > -1)
+        domain = 'dev.rdbhost.com';
+      $.rdbHostConfig({
+        'userName': "r0000000014",
+        'authcode': "-",
+        'domain': domain
+      });
+      var q = 'SELECT * FROM capitols';
+      $('.targets').populateTable({ q: q });
+    });
+    </script>
+</head>
+  <body>
+    
+    <div class="container">
+      <h3 class="titleStyle borderB">jQuery.Rdbhost $.populateTable div Demo</h3>
+      <p class="borderB">
+        This html table is populated from the database, and is generated to suit the
+        data. Demonstrates generating a table to fill a <i>div</i>.
+      </p>
+      <div class="targets">
+        <pre id="target"></pre>
+      </div>
+      <a href="../../index.html" class="btn myBtn">Back to Contents</a>
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+
+<head>
+    <meta name="fragment" content="!" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+    <link rel="stylesheet" href="css/foundation.css"/>
+    <link rel="stylesheet" href="css/custom.css"/>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <script src="http://www.rdbhost.com/vendor/Modernizr/2.6/modernizr.js"></script>
+    <script src="https://www.rdbhost.com/js/html5shim.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+    <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+    <script src="https://www.rdbhost.com/js/json2.js"></script>
+    <!-- script src="js/openid.js"></script -->
+
+</head>
+
+<body>
+
+<header class="top">
+    <div class="row">
+        <nav class="top-bar">
+            <ul class="title-area">
+                <!-- Title Area -->
+                <li class="name"><h1>Rdbhost JavaScript Boilerplate</h1></li>
+                <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+                <li class="toggle-topbar menu-icon"><a href=""><span>Menu</span></a></li>
+            </ul>
+            <section class="top-bar-section">
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li class="divider"></li>
+                </ul>
+            </section>
+        </nav>
+    </div>
+</header>
+
+<div class="row">
+    <div class="large-12 columns panel">
+        <h1>Login via OpenID</h1>
+
+        <p>This example shows how a user can use OpenID login for your Rdbhost site.</p>
+
+        <p>Before using these pages, you should enable OpenID logins from the profile page on the RdbHost website.</p>
+        <!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        <h4>Login Form</h4>
+
+        <div class="row">
+            <div class="large-6 columns">
+                <form id="openidForm" action="~" method="post">
+                    <fieldset>
+                        <label>OpenID Identifier URL</label>
+                        <input type="text" name="openidurl">
+                        <input type="submit" value="send" class="small button wine"/>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <p>Provide your OpenId identifier, complete with http:</p>
+        <h5>Examples:</h5>
+        <ul>
+            <li>http://example.livejournal.com</li>
+            <li>http://example.myopenid.com</li>
+        </ul>
+        <p>The OpenID Provider may ask if you wish to verify ID for "www.rdbhost.com". Respond "yes", as Rdbhost
+            handles the OpenID verification for us.</p>
+
+        <div id="alreadyLoggedIn">You are already logged in, as <span id="ident"></span></div>
+    </div>
+</div>
+
+<div class="row">
+    <hr>
+    <footer class="large-12 columns">
+        <p>&copy; David Keeney 2013</p>
+    </footer>
+</div>
+
+<script src="http://www.rdbhost.com/vendor/foundation/4.3/js/foundation.min.js"></script>
+<script>
+    $(document).foundation();
+</script>
+<script src="https://www.rdbhost.com/js/jquery.cookie.js"></script>
+<script>
+
+    var R = window.Rdbhost;
+
+    $(document).ready(function () {
+
+        var $inputForm = $('#openidForm'),
+                $alreadyForm = $('#alreadyLoggedIn'),
+                $identFld = $('#ident');
+
+        function onSuccess(key, ident) {
+
+            $inputForm.hide();
+            $alreadyForm.show();
+            $identFld.text(ident);
+        }
+
+        function onFailure(ident) {
+
+            $inputForm.show();
+            $alreadyForm.hide();
+            $identFld.val('');
+        }
+
+        $.rdbHostConfig({
+            'accountNumber': 14,
+            'domain': "www.rdbhost.com"
+        });
+
+        R.loginOpenId({
+            'loginForm': 'openidForm',
+            'callback': onSuccess,
+            'errback': onFailure
+        });
+
+    });
+</script>
+</body>
+</html>

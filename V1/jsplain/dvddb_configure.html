@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="fragment" content="!">
+  <title>RdbHost JSIntro</title>
+  <link href="css/custom.css" rel="stylesheet">
+    <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script language="javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+    <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+    <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+    <script language="javascript" src="http://www.rdbhost.com/js/json2.js"></script>
+  <script>
+
+    var R = window.Rdbhost;
+
+    TABLE_ALREADY_EXISTS = '42P07';
+    SCHEMA_ALREADY_EXISTS = '42P06';
+
+    function add_status_line(stat) {
+
+        var $stat = $('<li>~</li>'.replace('~',stat));
+        $('#status').append($stat);
+    }
+
+    $(document).ready(function () {
+
+        var createSchemaSQL =   'CREATE SCHEMA sandbox;   ';
+
+        var grantPrivs =        'GRANT USAGE ON SCHEMA sandbox TO p0000000014;'+
+                                'GRANT INSERT, SELECT, UPDATE                      '+
+                                '  ON sandbox.dvds_jsintro TO p0000000014;    ';
+
+        var createTableSQL =    'CREATE TABLE sandbox.dvds_jsintro(           '+
+                                '  id          SERIAL PRIMARY KEY,            '+
+                                '  name        varchar(40) NOT NULL,          '+
+                                '  rating      float,                         '+
+                                '  UNIQUE(name)                               '+
+                                ');                                           ';
+
+        var addDVDSQL =         'INSERT INTO sandbox.dvds_jsintro             '+
+                                '   (name, rating) VALUES (%s, %s)            ';
+
+        var getDVDListSQL =     'SELECT name, rating FROM sandbox.dvds_jsintro';
+
+        function createDVDTable() {
+
+            R.superPostData( {
+
+                'q' : createTableSQL,
+
+              'callback' : function () {
+                        add_status_line('table created');
+                        grantPrivsPreauth();
+                    },
+
+              'errback' : function (err) {
+
+                        //alert(errmsg);
+                        if ( err[0] === TABLE_ALREADY_EXISTS ) {
+                            add_status_line('table dvds_jsintro already exists');
+                            grantPrivsPreauth();
+                        }
+                        else {
+                            add_status_line(err[1]);
+                        }
+                     }
+            });
+        }
+
+        function grantPrivsPreauth() {
+
+            R.superPostData( {
+
+                 'q' : grantPrivs,
+
+                 'callback' : function () {
+                     add_status_line('privs granted to preauth role');
+                    },
+
+                 'errback' : function (err) {
+                     add_status_line(err[1]);
+                    }
+            });
+        }
+
+        // tell rdbhost module what role and account we are using
+        //
+        $.rdbHostConfig({
+            accountNumber : '14',
+            domain        : "www.rdbhost.com",
+            userName      : 'super'
+        });
+
+        // create schema and DVD table
+        //
+        $('#create-btn').click(function() {
+
+            R.superPostData( {
+
+                'q' : createSchemaSQL,
+
+                'callback' : function () {
+                    add_status_line('schema was created');
+                    createDVDTable();
+                },
+
+                'errback' : function (err) {
+                    if ( err[0] == SCHEMA_ALREADY_EXISTS ) {
+                        add_status_line('schema already exists');
+                        createDVDTable();
+                    }
+                    else
+                        add_status_line(err[1]);
+                }
+            });
+        })
+    })
+
+    </script>
+</head>
+<body>
+<div class="formContainer">
+	  <h1>DVD database status</h1>
+	<p><input type="submit" value="Create Schema and Table" id='create-btn' /></p>
+    <ul id="status">
+
+    </ul>
+
+<input type="button" value="Back to Home" class="backHome" onclick="location.href='index.html'" />
+
+</div>
+
+
+</body>
+</html>

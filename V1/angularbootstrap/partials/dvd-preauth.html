@@ -1,0 +1,38 @@
+<h1 class="titlePage">DVD Database Operation</h1>
+<form class="form-horizontal" method='post' id='add-form'>
+  <div class="form-group">
+    <label class="col-lg-2 control-label" for="title">Title</label>
+    <div class="col-lg-9">
+      <input type="text" placeholder="Title" id="title" class="form-control" name="title" ng-model="newTitle" />
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="col-lg-2 control-label" for="rating">Rating</label>
+    <div class="col-lg-9">
+      <input type="text" placeholder="Rating" id="rating" class="form-control" name="rating" ng-model="newRating" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-lg-offset-2 col-lg-10">
+      <input type="submit" value="Add" ng-click="addDVD()" class="btn btn-default" />
+    </div>
+  </div>
+</form>
+
+
+<ul class="listNone">
+  <li ng-repeat="s in status" class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span>{{s}}</li>
+</ul>
+
+<div class="text-center">
+  <!-- p><input type="submit" value="list" ng-click="listDVDs()" /></p -->
+  <a id="list-btn" href="" ng-click="listDVDs()">Click to list DVDs</a>
+  <table class="table table-bordered table-striped">
+    <tbody>
+      <tr ng-repeat="d in dvds">
+        <td class="text-left">{{d.name}}</td>
+        <td class="w100">{{d.rating}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

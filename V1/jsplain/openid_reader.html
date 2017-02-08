@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+    <head>
+      <meta name="fragment" content="!">
+      <title>OpenID Demo</title>
+  <link href="css/custom.css" rel="stylesheet">
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+      <script src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+      <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+      <script src="http://www.rdbhost.com/js/json2.js"></script>
+    </head>
+    <body>
+
+<div class="formContainer">
+
+
+        <h1>Login Form</h1>
+        <p> This example shows how a user can use openId login for your Rdbhost site.</p>
+        <p>Before OpenID logins will work, you must enable them from your account profile page.</p>
+
+        <p><script type="text/javascript">
+            document.write("Domain: " + location.host);
+        </script></p>
+        <div id="form-container">
+              <form id="openidForm" action="~" method="post">
+                <p><label>OpenID Identifier URL</label><input name="openidurl" size="75" />  <br/>
+                <input type="submit" /></p>
+                <p>Provide your OpenId identifier, complete with http: <br/>
+                  Examples: <ul><li>http://example.livejournal.com</li>
+                <li>http://example.myopenid.com</li></ul>
+                <p>The OpenID Provider may ask if you wish to verify ID for
+                  "www.rdbhost.com".  Respond "yes", as Rdbhost handles the OpenID
+                  verification for us.</p>
+              </form>
+            </div>
+
+            <div id="alreadyLoggedIn">
+              <p>You are already logged in, as <span id="ident"></span></p>
+            </div>
+<input type="button" value="Back to Home" class="backHome" onclick="location.href='index.html'" />
+          </div>
+
+
+
+        <script src="https://www.rdbhost.com/js/jquery.cookie.js"></script>
+        <script>
+          var R = window.Rdbhost;
+
+          $(document).ready(function () {
+
+            var $inputForm = $('#openidForm'),
+                $alreadyForm = $('#alreadyLoggedIn'),
+                $identFld = $('#ident');
+
+            function onSuccess(key, ident) {
+
+              $inputForm.hide();
+              $alreadyForm.show();
+              $identFld.text(ident);
+            }
+
+            function onFailure(ident) {
+
+              $inputForm.show();
+              $alreadyForm.hide();
+              $identFld.val('');
+            }
+
+            $.rdbHostConfig({
+              accountNumber: 14,
+              'userName': "read",
+              'domain': "www.rdbhost.com"
+            });
+
+            R.loginOpenId({
+              'loginForm' : 'openidForm',
+              'callback' : onSuccess,
+              'errback' : onFailure
+            });
+
+          });
+        </script>
+
+
+    </body>
+</html>

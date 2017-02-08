@@ -1,0 +1,12 @@
+<h1 class="titlePage">Rdbhost Emailing Demo</h1>
+<!-- this div receives status updates  -->
+<ul class="listNone">
+  <li class="alert-box success" ng-repeat="s in status">{{s}}</li>
+</ul>
+<p class="text-center">This demo sends an email to the webmaster of this site.</p>
+<form id='email-body'>
+    <label for="emailBody">Email:</label>
+    <textarea class="form-control" name="webmaster" id="emailBody" ng-model="emailBody" placeholder="Email"></textarea>
+
+    <input type="submit" class="btn" value="Send" ng-click="sendEmail()" />
+</form>

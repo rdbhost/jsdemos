@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="fragment" content="!">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <!--<link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.css" rel="stylesheet">-->
+  <link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/custom.css" rel="stylesheet">
+  <link href="css/content.css" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://www.rdbhost.com/js/html5shiv.js"></script><![endif]-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script src="http://www.rdbhost.com/js/json2.js"></script>
+  <script>
+
+    R = window.Rdbhost;
+
+    TABLE_ALREADY_EXISTS = '42P07';
+    SCHEMA_ALREADY_EXISTS = '42P06';
+
+    function add_status_line(stat) {
+
+      var $stat = $('<li class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span>~</li>'.replace('~', stat));
+      $('#status').append($stat);
+    }
+
+    $(document).ready(function () {
+
+      var createSchemaSQL = 'CREATE SCHEMA sandbox;   ';
+
+      var grantPrivs = 'GRANT USAGE ON SCHEMA sandbox TO p0000000014;' +
+              'GRANT INSERT, SELECT, UPDATE                 ' +
+              '  ON sandbox.dvds_jsintro TO p0000000014;    ';
+
+      var createTableSQL = 'CREATE TABLE sandbox.dvds_jsintro(           ' +
+              '  id          SERIAL PRIMARY KEY,            ' +
+              '  name        varchar(40) NOT NULL,          ' +
+              '  rating      float,                         ' +
+              '  UNIQUE(name)                               ' +
+              ');                                           ';
+
+      var addDVDSQL = 'INSERT INTO sandbox.dvds_jsintro             ' +
+              '   (name, rating) VALUES (%s, %s)            ';
+
+      var getDVDListSQL = 'SELECT name, rating FROM sandbox.dvds_jsintro';
+
+      function createDVDTable() {
+
+        R.superPostData({
+
+          'q': createTableSQL,
+
+          'callback': function () {
+            add_status_line('table created');
+            grantPrivsPreauth();
+          },
+
+          'errback': function (err) {
+
+            //alert(errmsg);
+            if (err[0] === TABLE_ALREADY_EXISTS) {
+              add_status_line('table dvds_jsintro already exists');
+              grantPrivsPreauth();
+            }
+            else {
+              add_status_line(err[1]);
+            }
+          }
+        });
+      }
+
+      function grantPrivsPreauth() {
+
+        R.superPostData({
+
+          'q': grantPrivs,
+
+          'callback': function () {
+            add_status_line('privs granted to preauth role');
+          },
+
+          'errback': function (err) {
+            add_status_line(err[1]);
+          }
+        });
+      }
+
+      // tell rdbhost module what role and account we are using
+      //
+      $.rdbHostConfig({
+        accountNumber: 14,
+        domain: "www.rdbhost.com",
+        userName: "super"
+      });
+
+      // create schema and DVD table
+      //
+      $('#create-btn').click(function () {
+
+        R.superPostData({
+
+          'q': createSchemaSQL,
+
+          'callback': function () {
+            add_status_line('schema was created');
+            createDVDTable();
+          },
+
+          'errback': function (err) {
+            if (err[0] == SCHEMA_ALREADY_EXISTS) {
+              add_status_line('schema already exists');
+              createDVDTable();
+            }
+            else
+              add_status_line(err[1]);
+          }
+        });
+      })
+    })
+
+  </script>
+
+  <!-- Fav and touch icons -->
+  <!--link rel="apple-touch-icon-precomposed" sizes="144x144"
+   href="../assets/ico/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="../assets/ico/favicon.png" -->
+</head>
+
+<body>
+
+  <nav role="navigation" class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button data-target=".navbar-ex8-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">Rdbhost JavaScript Boilerplate</a>
+      </div>
+
+      <div class="collapse navbar-collapse navbar-ex8-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Home</a></li>
+          <!-- li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Nav header</a></li>
+              <li><a href="#">Separated link</a></li>
+              <li><a href="#">One more separated link</a></li>
+            </ul>
+          </li -->
+        </ul>
+        <!--<form class="navbar-form navbar-left" role="">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Email">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-default">Sign in</button>
+          </form>-->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit well">
+      <h1>DVD Tracker</h1>
+
+      <p>
+        This page uses the Super role to create the 'sandbox' schema, and the 'dvds_jsintro' table. Unless
+      the Loading Status window shows errors, loading this page has already accomplished the setup you need.
+      </p>
+      <p>
+        Load the other DVD page <a href="dvddb_preauth.html">'dvddb_preauth.html'</a> while the account is in training
+      mode, and exercise each of the options to train the account white-list.
+      </p>
+      <p>
+        The code here is deliberately austere, with no input validation, so input errors are reflected as Database
+      errors. 
+      </p>
+      <!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+    </div>
+
+    <!-- Example row of columns -->
+    <div class="row">
+
+      <div class="col-sm-4">
+        <h4 class="mb10">Loading Status</h4>
+        <ul id="status" class="listNone"></ul>
+      </div>
+
+      <div class="col-sm-8">
+        <h4>DVD Add Form</h4>
+
+        <div style="padding: 10px 0;">
+          <button id='create-btn' class="btn btn-default">Create Schema and Table</button>
+        </div>
+      </div>
+
+    </div>
+
+    <hr>
+
+    <footer>
+      <p>&copy; David Keeney 2013</p>
+    </footer>
+
+  </div>
+  <!-- /container -->
+
+  <!-- Le javascript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://www.rdbhost.com/vendor/bootstrap/3.0/js/bootstrap.min.js"></script>
+  <!--<script src="http://www.rdbhost.com/js/bootstrap.13.2.js"></script>-->
+
+</body>
+</html>

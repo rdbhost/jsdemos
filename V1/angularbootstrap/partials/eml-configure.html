@@ -1,0 +1,55 @@
+<h1 class="titlePage">Rdbhost Emailing Configuration</h1>
+
+<!-- this div receives status updates  -->
+<ul class="listNone">
+  <li class="alert alert-info" ng-repeat="s in status"><span class="glyphicon glyphicon-info-sign"></span>{{s}}</li>
+</ul>
+<p>
+  This page creates (if necessary) the apis table, and adds an email api key.  The webmaster field
+    takes an email address; this address is the recipient of the R.emailWebmaster function. The account email
+    field is the address you registered with the third party email web service.
+</p>
+<div>
+  <h2 class="text-center mb10">Add email service to API Table</h2>
+  <!-- should be select with ('postmark' PostmarkApp | 'yak' EmailYak) -->
+  <form id="emailapi" method="post" class="form-horizontal">
+    <div class="form-group">
+      <label for="emservice" class="col-lg-2 control-label">Service:</label>
+      <div class="col-lg-9">
+        <!--<input type="text" class="form-control" name="service" id="emservice" ng-model="emlservice" placeholder="Service" />-->
+        <select class="form-control" name="service" id="emservice" ng-model="emlservice">
+          <option value="yak">Yak</option>
+          <option value="postmark">Postmark</option>
+        </select>
+
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="emapikey" class="col-lg-2 control-label">API Key:</label>
+      <div class="col-lg-9">
+        <input type="text" class="form-control" name="apikey" id="emapikey" ng-model="emlapikey" placeholder="API Key" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="acctemail" class="col-lg-2 control-label">Account Email:</label>
+      <div class="col-lg-9">
+        <input type="email" class="form-control" name="acctemail" id="acctemail" ng-model="emlacctemail" placeholder="Account Email" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="webmaster" class="col-lg-2 control-label">Webmaster:</label>
+      <div class="col-lg-9">
+        <input type="text" class="form-control" name="webmaster" id="webmaster" ng-model="emlwebmaster" placeholder="Webmaster" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-lg-offset-2 col-lg-10">
+        <input type="submit" class="btn btn-default" value="Add Service" ng-click="addEmailService()" />
+      </div>
+    </div>
+  </form>
+</div>

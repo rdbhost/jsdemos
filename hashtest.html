@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hash Text Test</title>
+</head>
+<body>
+
+<ul id="list"></ul>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"> </script>
+<script>
+    function locationHashChanged() {
+        alert('hash is now '+location.hash);
+        $('#list').append('<li>'+location.hash+'</li>');
+    }
+
+    window.onhashchange = locationHashChanged;
+    if (location.hash)
+        locationHashChanged();
+</script>
+</body>
+</html> 

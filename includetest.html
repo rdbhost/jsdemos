@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>RdbHost SQL Include Demo</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"> </script>
+    <script src="http://www.rdbhost.com/vendor/rdbhost/1.2/jquery.rdbhost.js"> </script>
+
+<script id="RDBHOST-SQL-INLINE-ID" type="text/sql" data-sql="SELECT * FROM samples" data-role=p0000000014></script>
+<script>
+    $(document).ready(function () {
+        var data = $('#RDBHOST-SQL-INLINE-ID').html();
+        var json = JSON.parse(data);
+        var nm = json.records.rows[0].body;
+
+        $('#target').text(nm);
+    });
+</script>
+</head>
+<body>
+<h3>jQuery.Rdbhost SQL Include Demo</h3>
+<p>This html table is populated from the database, and is generated to suit the
+    data. Demonstrates generating a table to fill a <i>div</i>.</p>
+
+<div class="targets"><pre id="target"></pre></div>
+</body>
+</html>

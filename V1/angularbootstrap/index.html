@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+  <head><meta charset="utf-8">
+    <meta name="fragment" content="!">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>My AngularJS RdbHost App</title>
+    <!--<link href="http://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.min.css" rel="stylesheet" />-->
+    <link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />-->
+   
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet" />-->
+
+    <link href="css/responsive.css" rel="stylesheet" />
+    <link href="css/content.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+  </head>
+<body>
+  <div class="container">
+
+    <ul class="nav nav-pills">
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle">DVD<span class="caret"></span></a>
+        <ul role="menu" class="dropdown-menu">
+          <li><a href="#/dvd-configure">configure</a></li>
+          <li><a href="#/dvd-preauth">preauth</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Email<span class="caret"></span></a>
+        <ul role="menu" class="dropdown-menu">
+          <li><a href="#/eml-configure">configure</a></li>
+          <li><a href="#/eml-preauth">preauth</a></li>
+        </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle">OpenID<span class="caret"></span></a>
+        <ul role="menu" class="dropdown-menu">
+          <li><a href="#/oid-preauth">preauth</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <div ng-view></div>
+
+    <div class="text-center">Angular Boilerplate App: v<span app-version></span></div>
+  </div>
+
+  <!-- In production use:<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="https://www.rdbhost.com/js/jquery.cookie.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script src="http://www.rdbhost.com/vendor/angular/1.2/angular.js"></script>
+  <script src="http://www.rdbhost.com/vendor/angular/1.2/angular-route.js"></script>
+  <script src="http://www.rdbhost.com/vendor/angular/1.2/angular-resource.js"></script>
+  <script src="js/rdbhostangular.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+  <script src="http://www.rdbhost.com/vendor/bootstrap/3.0/js/bootstrap.min.js"></script>
+</body>
+</html>

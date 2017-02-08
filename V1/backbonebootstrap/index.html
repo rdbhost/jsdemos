@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head><meta charset="utf-8">
+    <meta name="fragment" content="!">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>My BackboneJS RdbHost App</title>
+    <link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />-->
+
+    <link href="css/responsive.css" rel="stylesheet" />
+    <link href="css/content.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+
+    <ul class="nav nav-pills">
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">DVD<span class="caret"></span></a>
+            <ul role="menu" class="dropdown-menu">
+                <li><a href="#!/dvd-configure">configure</a></li>
+                <li><a href="#!/dvd-preauth">preauth</a></li>
+            </ul>
+        </li>
+
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">Email<span class="caret"></span></a>
+            <ul role="menu" class="dropdown-menu">
+                <li><a href="#!/eml-configure">configure</a></li>
+                <li><a href="#!/eml-preauth">preauth</a></li>
+            </ul>
+        </li>
+
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle">OpenID<span class="caret"></span></a>
+            <ul role="menu" class="dropdown-menu">
+                <li><a href="#!/oid-preauth">preauth</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <div id="page"></div>
+
+    <script type="text/template" id="status-row-template">
+        <span class="glyphicon glyphicon-info-sign"></span><%= s %>
+    </script>
+
+    <script type="text/template" id="dvd-configure-template">
+        <h1 class="titlePage">DVD Database Setup</h1>
+
+        <p class="text-center">
+            <input type="submit" value="Create Schema and Table" id='create-btn' class="btn" />
+        </p>
+        <div class="col-lg-12">
+            <ul class="listNone">
+            </ul>
+        </div>
+    </script>
+
+    <script type="text/template" id="dvd-preauth-template">
+
+        <h1 class="titlePage">DVD Database Operation</h1>
+        <form class="form-horizontal" method='post' id='add-form'>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="title">Title</label>
+                <div class="col-lg-9">
+                    <input type="text" placeholder="Title" id="title" class="form-control" name="title" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="rating">Rating</label>
+                <div class="col-lg-9">
+                    <input type="text" placeholder="Rating" id="rating" class="form-control" name="rating" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <input type="submit" value="Add" id="add-dvd" class="btn btn-default" />
+                </div>
+            </div>
+        </form>
+
+        <ul class="listNone">
+        </ul>
+
+        <div class="text-center">
+            <table class="table table-bordered table-striped">
+                <tbody id="dvd-list">
+                </tbody>
+            </table>
+        </div>
+    </script>
+
+    <script type="text/template" id="dvd-display-template">
+        <td class="text-left"><%= name %></td>
+        <td class="w100"><%= rating %></td>
+        <td class="w50"><a href='#' data-id="<%= id %>" class="delete">x</a></td>
+    </script>
+
+    <script type="text/template" id="eml-configure-template">
+        <h1 class="titlePage">Rdbhost Emailing Configuration</h1>
+
+        <!-- this div receives status updates  -->
+        <ul class="listNone">
+        </ul>
+        <p>
+            This page creates (if necessary) the apis table, and adds an email api key.  The webmaster field
+            takes an email address; this address is the recipient of the R.emailWebmaster function. The account email
+            field is the address you registered with the third party email web service.
+        </p>
+        <div>
+            <h2 class="text-center mb10">Add email service to API Table</h2>
+            <!-- should be select with ('postmark' PostmarkApp | 'yak' EmailYak) -->
+            <form id="emailapi" method="post" class="form-horizontal">
+                <div class="form-group">
+                    <label for="emservice" class="col-lg-2 control-label">Service:</label>
+                    <div class="col-lg-9">
+                        <!--<input type="text" class="form-control" name="service" id="emservice" ng-model="emlservice" placeholder="Service" />-->
+                        <select class="form-control" name="service" id="emservice" ng-model="emlservice">
+                            <option value="yak">Yak</option>
+                            <option value="postmark">Postmark</option>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="emapikey" class="col-lg-2 control-label">API Key:</label>
+                    <div class="col-lg-9">
+                        <input type="text" class="form-control" name="apikey" id="emapikey" ng-model="emlapikey" placeholder="API Key" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="acctemail" class="col-lg-2 control-label">Account Email:</label>
+                    <div class="col-lg-9">
+                        <input type="email" class="form-control" name="acctemail" id="acctemail" placeholder="Account Email" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="webmaster" class="col-lg-2 control-label">Webmaster:</label>
+                    <div class="col-lg-9">
+                        <input type="text" class="form-control" name="webmaster" id="webmaster"  placeholder="Webmaster" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <input type="submit" class="btn btn-default" id="create-email-btn" value="Add Service"  />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </script>
+
+    <script type="text/template" id="eml-preauth-template">
+        <h1 class="titlePage">Rdbhost Emailing Demo</h1>
+        <!-- this div receives status updates  -->
+        <ul class="listNone">
+        </ul>
+        <p class="text-center">This demo sends an email to the webmaster of this site.</p>
+        <form id='email-body' class="form-horizontal">
+            <div class="form-group">
+                <label for="emailBody" class="col-lg-2 control-label">Email:</label>
+                <div class="col-lg-9">
+                    <textarea class="form-control" name="webmaster" id="emailBody" placeholder="Email"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <input type="submit" id="send-email-btn" class="btn btn-default" value="Send"  />
+
+                </div>
+            </div>
+        </form>
+    </script>
+
+    <script type="text/template" id="oid-preauth-template">
+        <h1 class="titlePage">Rdbhost OpenID Login Demo</h1>
+        <!-- this div receives status updates  -->
+        <ul class="listNone">
+        </ul>
+
+        <form id="openidForm" action="~" method="post" class="form-horizontal">
+            <div class="form-group">
+                <label for="openidurl" class="col-lg-2 control-label">OpenID Identifier URL:</label>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" name="openidurl" id="openidurl" placeholder="URL" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <input type="submit" class="btn" value="Submit" />
+                </div>
+            </div>
+        </form>
+
+        <p>Provide your OpenId identifier, complete with http:</p>
+        <b>Examples:</b>
+        <ul>
+            <li class="text-info">http://example.livejournal.com</li>
+            <li class="text-info">http://example.myopenid.com</li>
+        </ul>
+
+        <p>The OpenID Provider may ask if you wish to verify ID for
+            "www.rdbhost.com".  Respond "yes", as Rdbhost handles the OpenID
+            verification for us.</p>
+    </script>
+
+    <div class="text-center">Backbone Boilerplate App: v<span app-version></span></div>
+</div>
+
+<!--
+load everything
+-->
+<script src="https://www.rdbhost.com/js/html5shim.js"></script><![endif]-->
+<script src="https://www.rdbhost.com/vendor/Modernizr/2.6/modernizr.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+<script src="https://www.rdbhost.com/js/jquery.cookie.js"></script>
+<script src="https://www.rdbhost.com/vendor/underscore/1.5/underscore.js"></script>
+<script src="https://www.rdbhost.com/vendor/backbone/1.1/backbone.js"></script>
+<script src="https://www.rdbhost.com/vendor/rdbhost/1.2/jquery.rdbhost.js"></script>
+<script src="https://www.rdbhost.com/vendor/showdown/0.3/src/showdown.js"></script>
+<script src="https://www.rdbhost.com/vendor/rdbhost/1.2/jquery.rdbhost.utils.js"></script>
+
+<script src="js/app.js"></script>
+<script src="js/models/dvd-model.js"></script>
+<script src="js/collections/collection-model.js"></script>
+<script src="js/views/list-view.js"></script>
+<script src="js/views/email-view.js"></script>
+<script src="js/views/openid-view.js"></script>
+<script src="js/routers/router.js"></script>
+
+<script src="https://www.rdbhost.com/vendor/bootstrap/3.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

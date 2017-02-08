@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="fragment" content="!">
+  <title>My AngularJS RdbHost App</title>
+  <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+  <ul class="menu dvd">
+    <li><a href="#/dvd-configure">configure</a></li>
+    <li><a href="#/dvd-preauth">preauth</a></li>
+  </ul>
+  <ul class="menu email">
+    <li><a href="#/eml-configure">configure</a></li>
+    <li><a href="#/eml-preauth">preauth</a></li>
+  </ul>
+  <ul class="menu openid">
+    <li><a href="#/oid-preauth">preauth</a></li>
+  </ul>
+
+  <div ng-view></div>
+
+  <div>RdbHost-Angular seed app: v<span app-version></span></div>
+
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+  -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="https://www.rdbhost.com/js/jquery.cookie.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script src="http://www.rdbhost.com/vendor/angular/1.2/angular.js"></script>
+  <script src="http://www.rdbhost.com/vendor/angular/1.2/angular-resource.js"></script>
+  <script src="http://www.rdbhost.com/vendor/angular/1.2/angular-route.js"></script>
+  <script src="js/rdbhostangular.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+</body>
+</html>

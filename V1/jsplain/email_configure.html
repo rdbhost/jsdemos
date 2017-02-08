@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="fragment" content="!">
+  <title>Email Configuration</title>
+  <link href="css/custom.css" rel="stylesheet">
+  <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/json2.js"></script>
+</head>
+<body>
+    <script>
+
+        var R = window.Rdbhost;
+
+        function add_status_line(stat) {
+            var $stat = $('<li>~</li>'.replace('~',stat));
+            $('#status').append($stat);
+        }
+
+        $(document).ready(function () {
+
+            $.rdbHostConfig({
+                domain:   'www.rdbhost.com',
+                accountNumber: 14,
+                userName: 'super'
+            })
+
+            var $emailForm = $('#emailapi');
+            $emailForm.submit(function (ev) {
+
+                var svc = $emailForm.find('#emservice').val(),
+                    apikey = $emailForm.find('#emapikey').val(),
+                    acctemail = $emailForm.find('#acctemail').val(),
+                    webmaster = $emailForm.find('#webmaster').val();
+
+                var p = R.setupEmail({
+
+                    service: svc,
+                    apikey: apikey,
+                    acctemail: acctemail,
+                    webmaster: webmaster
+                });
+
+                p.done(function(resp) {
+
+                  alert('email apikey added to apis table');
+                });
+                p.fail(function(errArray) {
+
+                  alert('email apikey addition failed! '+errArray[1]);
+                });
+
+                return false;
+          });
+      })
+    </script>
+
+
+<div class="formContainer">
+    <h1>Rdbhost Emailing Configuration</h1>
+    <!-- this div receives status updates  -->
+    <div id="status"></div>
+
+
+    <p>This page creates (if necessary) the apis table, and adds an email api key.  The webmaster field
+      takes an email address; this address is the recipient of the R.emailWebmaster function.  The account email
+      field is the address you registered with the third party email web service.</p>
+
+    <div>
+        <form id="emailapi" method="POST">
+            <h2>Add email service to API Table</h2>
+            <!-- should be select with ('postmark' PostmarkApp | 'yak' EmailYak) -->
+            <p><label>Service:</label> <input type="text" name="service" id="emservice" /></p>
+            <p><label>API Key:</label> <input type="text" name="apikey" id="emapikey" /></p>
+            <p><label>Account Email:</label> <input type="text" name="acctemail" id="acctemail" /></p>
+            <p><label>Webmaster:</label> <input type="text" name="webmaster" id="webmaster" /></p>
+            <p><input type="submit" value="Send" /></p>
+        </form>
+    </div>
+
+<input type="button" value="Back to Home" class="backHome" onclick="location.href='index.html'" />
+
+</div>
+
+</body>
+</html>

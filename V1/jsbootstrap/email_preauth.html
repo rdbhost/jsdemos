@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="fragment" content="!">
+  <meta charset="utf-8">
+  <title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.min.css" rel="stylesheet">
+  <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
+  <link href="css/custom.css" rel="stylesheet" />
+  <link href="css/content.css" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://www.rdbhost.com/js/html5shiv.js"></script><![endif]-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script src="http://www.rdbhost.com/js/json2.js"></script>
+  <script>
+
+    var R = window.Rdbhost;
+
+    function add_status_line(stat) {
+      var $stat = $('<li class="alert alert-info"><span class="glyphicon glyphicon-info-sign"></span>~</li>'.replace('~', stat));
+      $('#status').append($stat);
+    }
+    /*
+     callback function for mail sending
+     */
+    function followUpEmailing(resp) {
+
+      var httpStat = resp.status[0];
+      if (httpStat === 'error') {
+
+        add_status_line('<div>Email was not Sent %s</div>'.replace('%s', resp.error[1]));
+      }
+      else {
+
+        if (resp.row_count[0] === 0) {
+
+          add_status_line('No emails were sent, maybe api key is missing from apis table.')
+        }
+        else {
+
+          var stat = resp.records.rows[0].result;
+          if (stat === 'Success') {
+
+            add_status_line('<div>Email was sent successfully</div>');
+          }
+          else {
+
+            add_status_line('<div>Error: %s</div>'.replace('%s', stat));
+          }
+        }
+      }
+    }
+
+    $(document).ready(function () {
+
+      /*
+       Tell the rdbhost plugin our database login credentials
+       */
+      $.rdbHostConfig({
+        'userName': "preauth",
+        'accountNumber': 14,
+        'domain': 'www.rdbhost.com'
+      });
+
+      /*
+       attach click handler to form button, to send email when form submitted.
+
+       The body is the only user entered part of the email, and is passed as the one param
+       */
+      $('#email-body').submit(function () {
+
+        var body = $('#body').val();
+
+        var p = R.emailWebmaster({
+
+          bodyString: body,
+          // replyTo: jsdemos@travelbyroad.net',
+          subject: 'test subject'
+        });
+
+        p.then(function (resp) {
+
+          // alert( resp.records.rows[0].result ); // 'Success'
+          followUpEmailing(resp);
+        }, function (errArry) {
+
+          // alert(errArry[1]);  // database error message
+          add_status_line('<div>Error: %s</div>'.replace('%s', errArry[1]));
+        });
+
+        return false;
+      })
+    })
+
+  </script>
+
+  <!-- Fav and touch icons -->
+  <!--link rel="apple-touch-icon-precomposed" sizes="144x144"
+   href="../assets/ico/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="../assets/ico/favicon.png" -->
+</head>
+
+<body>
+
+  <nav role="navigation" class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button data-target=".navbar-ex8-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">Rdbhost JavaScript Boilerplate</a>
+      </div>
+
+      <div class="collapse navbar-collapse navbar-ex8-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">Home</a></li>
+          <!-- li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Nav header</a></li>
+              <li><a href="#">Separated link</a></li>
+              <li><a href="#">One more separated link</a></li>
+            </ul>
+          </li -->
+        </ul>
+        <!--<form class="navbar-form navbar-left" role="">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Email">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-default">Sign in</button>
+          </form>-->
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit well">
+      <h2>Send An Email</h2>
+
+      <p>This demo sends an email to 'p0000000014@spamspot.com'.  You can visit <a href="http://www.spamspot.com">www.spamspot.com</a> in your browser after a few minutes to see that it arrived.</p>
+
+      <p>
+        Before this script will work, you need to use the <a href="email_configure.html">email_super.html</a> page to set
+      up the keyfile.  Before loading that page, you must setup an account at EmailYak or PostmarkApp and enter the account info into the text of the email_super.html page.
+      </p>
+
+      <p>
+        Before you loaded this page for the first time (or now, at worst), you should have put your account into
+      training mode.  Send an email in order to put the necessary SQL into the account white-list.
+      </p>
+
+      <!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+    </div>
+
+    <!-- Example row of columns -->
+    <div class="row">
+
+      <div class="col-sm-4">
+        <h4>Status</h4>
+        <ul id="status" class="listNone"></ul>
+      </div>
+
+      <div class="col-sm-8">
+        <h4 class="mb10">Email Form</h4>
+
+        <form action='' id='email-body' enctype="multipart/form-data" role="form">
+          <div class="form-group">
+            <label for="body">Email:</label>
+            <textarea class="form-control" id="body" placeholder="Email"></textarea>
+          </div>
+          <input type="submit" value="Send Email" class="btn btn-default mb10" />
+        </form>
+
+      </div>
+
+    </div>
+
+    <hr>
+
+    <footer>
+      <p>&copy; David Keeney 2013</p>
+    </footer>
+
+  </div>
+  <!-- /container -->
+
+  <!-- Le javascript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <!--<script src="http://www.rdbhost.com/js/bootstrap.13.2.js"></script>-->
+  <script src="https://www.rdbhost.com/vendor/bootstrap/3.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>

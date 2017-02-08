@@ -1,0 +1,9 @@
+﻿<div class="formContainer">
+  <h1 class="titlePage">DVD Database Setup</h1>
+  <p class="text-center">
+    <input type="submit" value="Create Schema and Table" id='create-btn' ng-click="createResources()" class="btn" />
+  </p>
+  <ul class="listNone">
+    <li ng-repeat="s in status" class="alert-box success">{{s}}</li>
+  </ul>
+</div>

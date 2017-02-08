@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<!--<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">-->
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RdbHost Plugin OAuth1 login </title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/main.css" rel="stylesheet" />
+  <script language="javascript" type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script language="javascript" type="text/javascript" src="https://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" type="text/javascript" src="https://www.rdbhost.com/vendor/rdbhost/1.3/jquery.rdbhost.js"></script>
+  <script src="https://www.rdbhost.com/js/jquery.cookie.js"></script>
+  <script language="javascript" type="text/javascript" src="../js/json2.js"></script>
+  <script type="text/javascript">
+
+    var myKeyName = 'oauth',
+        loginKeyName = 'FEDAUTH_KEY',
+        loginId;
+
+    function loggedIn(loginId) {
+        $('#loginDiv').hide();
+        $('#okDiv').show();
+        $('#uid').text(loginId);
+    }
+
+    function notLoggedIn() {
+
+        $('#loginDiv').show();
+        $('#okDiv').hide();
+        implicitLogin();
+    }
+
+    // login - runs when user has logged in.
+    //
+    function login() {
+        var ck = $.cookie(myKeyName);
+        if (ck) {
+            loggedIn(ck);
+        }
+        else {
+            notLoggedIn();
+        }
+    }
+
+    function logout() {
+
+        $.cookie(myKeyName, null, {path: '/'});
+        $.cookie(loginKeyName, null, {path: '/'});
+        notLoggedIn();
+    }
+
+    // see if hash or cookie login key available
+    //
+    function implicitLogin() {
+
+        $.loginOAuth({
+
+            offsiteHosting: true,
+            domain: window.location.href.indexOf('dev') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com',
+            userName: 'r0000000014',
+
+            errback: function (msg) {
+                notLoggedIn();
+                alert(msg)
+            },
+            callback: function (key, ident) {
+
+                loginId = ident;
+                $.cookie(myKeyName, ident + ' ' + key);
+                $.cookie(loginKeyName, '');
+                loggedIn(ident);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+
+        // login user in, load sidebar
+        notLoggedIn();
+        implicitLogin();
+
+        $('#logoutBtn').click(logout);
+
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h3 class="titleStyle borderB">jQuery.Rdbhost OAuth1 login example</h3>
+    <!--<p>~~~~.</p>-->
+
+    <!-- login forms -->
+    <div id="loginDiv">
+        <form action="/auth/oauth1/one" method="get">
+            <input type="hidden" name="path" value="/rdb/examples/oauth1.html">
+            <input type="hidden" name="provider" value="Twitter">
+            <input type="hidden" name="acct" value="14">
+            <input type="submit" value="Login with Twitter">
+        </form>
+
+      <form action="/auth/oauth1/one" method="get">
+        <input type="hidden" name="path" value="/rdb/examples/oauth1.html">
+        <input type="hidden" name="provider" value="Oauthtest">
+        <input type="hidden" name="acct" value="14">
+        <input type="submit" value="Login with Oauthtest">
+      </form>
+    </div>
+    <div id="okDiv">
+      You are logged in as <span id="uid"></span>
+      <input type="button" id="logoutBtn" value="Logout" />
+    </div>
+
+    <a href="../../index.html" class="btn myBtn">Back to Contents</a>
+
+  </div>
+</body>
+</html>

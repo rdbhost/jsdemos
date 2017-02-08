@@ -1,0 +1,19 @@
+<!-- this div receives status updates  -->
+<ul>
+    <li ng-repeat="s in status">{{s}}</li>
+</ul>
+
+<div id="form-container">
+    <form id="openidForm" action="~" method="post">
+        <p><label>OpenID Identifier URL</label><input name="openidurl" size="75"  />  <br/>
+            <input type="submit" /></p>
+        <p>Provide your OpenId identifier, complete with http: <br/>
+            Examples: <ul><li>http://example.livejournal.com</li>
+        <li>http://example.myopenid.com</li></ul>
+        <p>The OpenID Provider may ask if you wish to verify ID for
+            "www.rdbhost.com".  Respond "yes", as Rdbhost handles the OpenID
+            verification for us.</p>
+    </form>
+</div>
+
+

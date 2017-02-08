@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" >
+<!--<![endif]-->
+
+<head>
+	<meta charset="utf-8" />
+    <meta name="fragment" content="!" />
+    <meta name="viewport" content="width=device-width" />
+	<title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+	<link rel="stylesheet" href="css/foundation.css" />
+	<link rel="stylesheet" href="css/custom.css" />
+</head>
+
+<body>
+<header class="top">
+	<div class="row">
+				<nav class="top-bar">
+			<ul class="title-area">
+				<!-- Title Area -->
+				<li class="name"><h1>Rdbhost JavaScript Boilerplate</h1></li>
+				<!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+				<li class="toggle-topbar menu-icon"><a href=""><span>Menu</span></a></li>
+			</ul>
+			<section class="top-bar-section">
+				<ul class="left">
+					<li class="divider"></li>
+					<li><a href="index.html">Home</a></li>
+					<li class="divider"></li>
+				</ul>
+			</section>
+		</nav>
+	</div>
+</header>
+
+
+	<div class="row">
+		<div class="large-12 columns panel">
+			<h1>Welcome to Rdbhost!</h1>
+			<p>These linked pages are a demonstration of programming for Rdbhost.com.  They include a simple DVD tracking application, an app to send email, and a demo of handling OpenID logins for your users.</p>
+			<!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+		</div>
+	</div>
+
+  <!-- Example row of columns -->
+  <div class="row">
+    <div class="large-4 columns frontPage">
+      <h2>DVD DB Demo</h2>
+      <p>These two pages represent different roles.</p>
+      <p>With the first page, you can use the Super
+        role to setup the database, schema, and tables.  </p>
+      <p>With the second, you can train the
+        server account; once the training is done, the second can be used safely by anyone to
+        manipulate the database, as only white-listed queries can be executed on that role.</p>
+      <p class="bottomButtons"><a class="small button wine" href="dvddb_configure.html">Configure &raquo;</a>
+        <a class="small button wine" href="dvddb_preauth.html">Use CD DB &raquo;</a></p>
+    </div>
+    <div class="large-4 columns frontPage">
+      <h2>Emailing Demo</h2>
+      <p>These two pages represent different roles.</p>
+      <p>With the first page, you can use the Super
+        role to setup the keyfile.  </p>
+      <p>With the second, you can train the
+        server account; once the training is done, the second can be used safely by anyone to
+        send emails.</p>
+      <p class="bottomButtons"><a class="small button wine" href="email_configure.html">Configure &raquo;</a>
+         <a class="small button wine" href="email_preauth.html">Send Email &raquo;</a></p>
+    </div>
+    <div class="large-4 columns frontPage">
+      <h2>OpenID Demo</h2>
+
+      <p>With this page, you can test logging in using an OpenID login.  This example uses
+        the reader role, but any role can be used for OpenID logins.</p>
+      <p class="bottomButtons">
+        <a class="small button wine" href="openid_reader.html">OpenID Login &raquo;</a></p>
+    </div>
+  </div>
+
+
+
+	<div class="row">
+		<hr>
+		<footer class="large-12 columns">
+			<p>&copy; David Keeney 2013</p>
+		</footer>
+	</div>
+
+
+<script src="http://www.rdbhost.com/vendor/Modernizr/2.6/modernizr.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+<script src="http://www.rdbhost.com/vendor/foundation/4.3/js/foundation.min.js"></script>
+<script>
+    $(document).foundation();
+</script>
+</body>
+</html>

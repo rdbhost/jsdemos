@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="fragment" content="!">
+  <meta charset="utf-8">
+  <title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Le styles -->
+  <link href="https://www.rdbhost.com/vendor/bootstrap/3.0/css/bootstrap.css" rel="stylesheet">
+  <!--<link href="css/bootstrap.min2.css" rel="stylesheet">-->
+  <link href="css/custom.css" rel="stylesheet">
+  <link href="css/content.css" rel="stylesheet" />
+  <link href="css/main.css" rel="stylesheet" />
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://www.rdbhost.com/js/html5shim.js"></script>
+  <![endif]-->
+
+  <!-- Fav and touch icons -->
+  <!--link rel="apple-touch-icon-precomposed" sizes="144x144"
+   href="../assets/ico/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="../assets/ico/favicon.png" -->
+</head>
+
+<body>
+  <nav role="navigation" class="navbar navbar-inverse">
+    <div class="container">
+      <div class="navbar-header">
+        <button data-target=".navbar-ex8-collapse" data-toggle="collapse" class="navbar-toggle" type="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="index.html" class="navbar-brand">Rdbhost JavaScript Boilerplate</a>
+      </div>
+
+      <div class="collapse navbar-collapse navbar-ex8-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="index.html">Home</a></li>
+          <!-- li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Action</a></li>
+              <li><a href="#">Another action</a></li>
+              <li><a href="#">Something else here</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Nav header</a></li>
+              <li><a href="#">Separated link</a></li>
+              <li><a href="#">One more separated link</a></li>
+            </ul>
+          </li -->
+        </ul>
+        <!--<form class="navbar-form navbar-left" role="">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Email">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-default">Sign in</button>
+          </form>-->
+      </div>
+    </div>
+  </nav>
+
+
+  <div class="container">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit well">
+      <h1>Welcome to Rdbhost!</h1>
+      <p>
+        These linked pages are a demonstration of programming for Rdbhost.com.  They include a simple
+        DVD tracking application, an app to send email, and a demo of handling OpenID logins for your users.
+      </p>
+      <!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+    </div>
+
+    <!-- Example row of columns -->
+    <div class="row">
+      <div class="col-sm-4">
+        <h2>DVD DB Demo</h2>
+        <p>These two pages represent different roles.</p>
+        <p>
+          With the first page, you can use the Super
+          role to setup the database, schema, and tables. 
+        </p>
+        <p>
+          With the second, you can train the
+          server account; once the training is done, the second can be used safely by anyone to
+          manipulate the database, as only white-listed queries can be executed on that role.
+        </p>
+        <p>
+          <a class="btn btn-default" href="dvddb_configure.html">Config &raquo;</a>
+          <a class="btn btn-default" href="dvddb_preauth.html">Preauth &raquo;</a>
+        </p>
+      </div>
+      <div class="col-sm-4">
+        <h2>Emailing Demo</h2>
+        <p>These two pages represent different roles.</p>
+        <p>
+          With the first page, you can use the Super
+          role to setup the keyfile. 
+        </p>
+        <p>
+          With the second, you can train the
+          server account; once the training is done, the second can be used safely by anyone to
+          send emails.
+        </p>
+        <p>
+          <a class="btn btn-default" href="email_configure.html">Config &raquo;</a>
+          <a class="btn btn-default" href="email_preauth.html">Preauth &raquo;</a>
+        </p>
+      </div>
+      <div class="col-sm-4">
+        <h2>OpenID Demo</h2>
+        <p>These two pages represent different roles.</p>
+        <p>
+          The first page is non-essential, as the necessary server configuration is done
+          for you when you enable OpenID.  This is here as a guide, should you wish to use
+          a different post-login response.
+        </p>
+        <p>
+          With the second, you can test logging in using an OpenID login.  This example uses
+          the reader role, but any role can be used for OpenID logins.
+        </p>
+        <p>
+          <a class="btn btn-default" href="openid_reader.html">Reader &raquo;</a>
+        </p>
+      </div>
+    </div>
+
+    <hr>
+
+    <footer>
+      <p>&copy; David Keeney 2013</p>
+    </footer>
+
+  </div>
+  <!-- /container -->
+
+  <!-- Le javascript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="http://www.rdbhost.com/vendor/jquery/1.8/jquery-1.8.3.min.js"></script>
+  <script src="https://www.rdbhost.com/vendor/bootstrap/3.0/js/bootstrap.min.js"></script>
+  <!--<script src="http://www.rdbhost.com/js/bootstrap.13.2.js"></script>-->
+</body>
+</html>

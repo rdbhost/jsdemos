@@ -1,0 +1,27 @@
+<div class="formContainer">
+
+    <h1>DVD database status</h1>
+
+    <form method='post' id='add-form' >
+
+        <p><label>Title</label><input type="text" size="30" id="title" name="title" ng-model="newTitle" /></p>
+        <p><label>Rating</label><input type="text" size="30" id="rating" name="rating" ng-model="newRating" /></p>
+
+        <p><input type="submit" value="add" ng-click="addDVD()" /></p>
+    </form>
+
+    <ul>
+        <li ng-repeat="s in status track by $index">{{s}}</li>
+    </ul>
+
+    <div style="width:400px; margin:10px; padding:10px;">
+        <!-- p><input type="submit" value="list" ng-click="listDVDs()" /></p -->
+        <a id="list-btn" href="" ng-click="listDVDs()" >Click to list DVDs</a>
+        <table id="list" style="width:400px">
+            <tr ng-repeat="d in dvds track by $index">
+                <td class="name">{{d.name}}</td><td class="rating">{{d.rating}}</td>
+            </tr>
+        </table>
+    </div>
+
+</div>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en" >
+<!--<![endif]-->
+
+<head>
+	<meta name="fragment" content="!" />
+        <meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Rdbhost JavaScript Bootstrap Boilerplate</title>
+	<link rel="stylesheet" href="css/foundation.css" />
+	<link rel="stylesheet" href="css/custom.css" />
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <script src="http://www.rdbhost.com/vendor/Modernizr/2.6/modernizr.js"></script>
+  <script src="http://www.rdbhost.com/js/html5shiv.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script src="http://www.rdbhost.com/js/json2.js"></script>
+    <script>
+
+        var R = window.Rdbhost;
+
+        function add_status_line(stat) {
+            var $stat = $('<li>~</li>'.replace('~',stat));
+            $('#status').append($stat);
+        }
+
+        $(document).ready(function () {
+
+            $.rdbHostConfig({
+                domain:   'www.rdbhost.com',
+                accountNumber : 14,
+                userName: 'super'
+            });
+
+            var $emailForm = $('#emailapi');
+            $emailForm.submit(function (ev) {
+
+                var svc = $emailForm.find('#emservice').val(),
+                    apikey = $emailForm.find('#emapikey').val(),
+                    acctemail = $emailForm.find('#acctemail').val(),
+                    webmaster = $emailForm.find('#webmaster').val();
+
+                var p = R.setupEmail({
+
+                    service: svc,
+                    apikey: apikey,
+                    acctemail: acctemail,
+                    webmaster: webmaster
+                });
+
+                p.done(function(resp) {
+
+                    //alert('email apikey added to apis table');
+                    add_status_line('email api key added to apis table');
+                });
+                p.fail(function(errArray) {
+
+                    //alert('email apikey addition failed! '+errArray[1]);
+                    add_status_line('email api key addition failed! '+errArray[1]);
+                });
+
+                return false;
+            });
+        })
+    </script>
+</head>
+
+<body>
+
+<header class="top">
+	<div class="row">
+				<nav class="top-bar">
+			<ul class="title-area">
+				<!-- Title Area -->
+				<li class="name"><h1>Rdbhost JavaScript Boilerplate</h1></li>
+				<!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+				<li class="toggle-topbar menu-icon"><a href=""><span>Menu</span></a></li>
+			</ul>
+			<section class="top-bar-section">
+				<ul class="left">
+					<li class="divider"></li>
+					<li><a href="/index.html">Home</a></li>
+					<li class="divider"></li>
+				</ul>
+			</section>
+		</nav>
+	</div>
+</header>
+
+	<div class="row">
+		<div class="large-12 columns panel">
+			<h1>Setup Email</h1>
+
+			<p>This configure page adds an email api key to the APIs table, creating the table if necessary.
+                The <a href="email_preauth.html">email_preauth.html</a> page can then send email using that key,
+                without being able to read the key.  This permits sending email from a JavaScript application,
+                via an authenticated email service, without revealing the email service account keys.</p>
+
+			<!-- p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p -->
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="large-4 columns">
+		  <h4>Status</h4>
+		  <ul id="status"> </ul>
+		</div>
+
+		<div class="large-8 columns">
+			<h4>Email Setup Form</h4>
+            <form id="emailapi" method="POST">
+                <h5>Add email service to API Table</h5>
+				<div class="row">
+					<div class="large-6 columns">
+                <!-- should be select with ('postmark' PostmarkApp | 'yak' EmailYak) -->
+					<p><label>Service:</label> <input type="text" name="service" id="emservice" /></p>
+					<p><label>API Key:</label> <input type="text"  name="apikey" id="emapikey" /></p>
+					</div>
+					<div class="large-6 columns">
+					<p><label>Account Email:</label> <input type="text" name="acctemail" id="acctemail" /></p>
+					<p><label>Webmaster:</label> <input type="text" name="webmaster" id="webmaster" /></p>
+					<p><input type="submit" value="Send" class="small button wine right" /></p>
+					</div>
+				</div>
+            </form>
+		</div>
+	</div>
+
+	<div class="row">
+		<hr>
+		<footer class="large-12 columns">
+			<p>&copy; David Keeney 2013</p>
+		</footer>
+	</div>
+
+
+<script src="http://www.rdbhost.com/vendor/foundation/4.3/js/foundation.min.js"></script>
+<script>
+    $(document).foundation();
+</script>
+</body>
+</html>

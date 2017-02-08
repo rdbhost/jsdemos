@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rdbhost JavaScript OpenID Login example</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <link href="../css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../css/main.css" rel="stylesheet" />
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="http://www.rdbhost.com/js/html5shiv.js"></script><![endif]-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+  <script src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script src="http://www.rdbhost.com/js/json2.js"></script>
+  <script>
+
+    // this is the reference email you create when you set up the yak account
+    var from_email = 'rdbhost@rdbhost.com';
+
+    function add_status_line(stat) {
+      var $stat = $('<li>~</li>'.replace('~', stat));
+      $('#status').append($stat);
+    }
+
+    /*
+     callback function for mail sending
+     */
+    function followUpEmailing(resp) {
+
+      var httpStat = resp.status[0];
+
+      if (httpStat === 'error') {
+
+        add_status_line('<div>Email was not Sent %s</div>'.replace('%s', resp.error[1]));
+      }
+      else {
+
+        var stat = resp.records.rows[0].result;
+
+        if (stat === 'Success') {
+          add_status_line('<div>Email was sent successfully</div>');
+        }
+        else {
+          add_status_line('<div>Error: %s</div>'.replace('%s', stat));
+        }
+      }
+    }
+
+    $(document).ready(function () {
+
+      var domain = 'www.rdbhost.com';
+      if (window.location.hostname.indexOf('dev') > -1)
+        domain = 'dev.rdbhost.com';
+      /*
+       Tell the rdbhost plugin our database login credentials
+       */
+      $.rdbHostConfig({
+        'userName': "p0000000014",
+        'authcode': "-",
+        'domain': domain
+      });
+
+      /*
+       define SQL query for email sending.
+
+       [REMOTE_ADDR] is replaced with the value of that cgi variable by server
+       the 'api' table must preexist, and be readable by preauth
+       idx = 1 is arbitrary
+
+       */
+      var q =
+        "SELECT replace( replace('User at @ Wrote:\n#','@',%[REMOTE_ADDR]), '#',%s)  AS  body,          " +
+          "       'rdbhost@koszmail.pl' AS \"To:\",                                                       " +
+          "       '~from~email~' AS \"From:\",                                                            " +
+          "       apis.apikey AS apikey,                                                                  " +
+          "       apis.service AS service,                                                                " +
+          "       1 AS idx,                                                                               " +
+          "       'from test email page' AS \"Subject:\"                                                  " +
+          " FROM auth.apis LIMIT 1                                                                        ";
+
+      q = q.replace('~from~email~', from_email);
+      var tagQ = 'send_email';
+
+      /*
+       attach click handler to form button, to send email when form submitted.
+
+       The body is the only user entered part of the email, and is passed as the one param
+       */
+      $('#email-body').submit(function () {
+        var body = $('#body').val();
+        // submit email request
+        var args = [body];
+        $.postData({
+          'q': q,
+          'tag': tagQ,
+          'args': args,
+          'mode': 'email',
+          'callback': followUpEmailing,
+          'errback': function (err) {
+            alert('emailing failed ' + err);
+          }
+        });
+        return false;
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2 class="titleStyle borderB">Send An Email</h2>
+    <p class="borderB">This demo sends an email to 'rdbhost@koszmail.pl'.  You can visit <a href="http://www.koszmail.pl">www.koszmail.pl</a> in your browser after a few minutes to see that it arrived.</p>
+    <!-- Example row of columns -->
+    <h4 class="titleStyle">Status</h4>
+
+    <ul id="status"></ul>
+
+    <form role="form" action='' id='email-body'>
+      <div class="form-group">
+        <label for="email">Email Form</label>
+        <textarea class="form-control" id="email" placeholder="Email Form" style="resize:none"></textarea>
+      </div>
+      <input type="submit" class="btn myBtn" value="Send" />
+      <a href="../../index.html" class="btn myBtn">Back to Contents</a>
+    </form>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fragment" content="!">
+    <title>Initialize Email and Credit Card Tables</title>
+    <script language="javascript" type="text/javascript"
+            src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <!-- Your project file goes here -->
+    <script language="javascript" type="text/javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.js"></script>
+    <script type="text/javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+    <script type="text/javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+</head>
+<style type="text/css">
+body {margin:0; padding:0; background-color: #E9E9E9; font-family: 'Trebuchet MS'}
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+h1 {margin:0; padding:20px 0 30px 10px; color: #B1B1B1; font-size: 24px; line-height: 30px; text-transform: uppercase;}
+.formContainer {margin:30px auto; padding:20px; width: 700px; border: 2px #B1B1B1 solid; background-color: #ffffff;
+  -webkit-border-radius: 20px;
+     -moz-border-radius: 20px;
+          border-radius: 20px;
+}
+
+p {margin:0; padding:10px; width: 320px; float: left;}
+
+label {color: #B1B1B1; font-size: 16px; line-height: 26px;}
+button,
+input,
+select,
+textarea {
+  margin: 0;
+  font-size: 100%;
+  vertical-align: middle;
+  *overflow: visible;
+  font-weight: normal;
+  display: block;
+  height: 30px;
+  padding: 4px 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 30px;
+  color: #B1B1B1;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+     -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+       -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+          transition: border linear 0.2s, box-shadow linear 0.2s;}
+
+.clear {clear: both;}
+
+input {width: 280px;}
+select {width: 280px;}
+input[type="submit"] {background-color:#A7A7A7; color: #ffffff; width: 100px; font-weight: bold; padding-bottom: 10px; line-height:20px; cursor: pointer;}
+input[type="submit"]:hover {background-color:#ffffff; color: #A7A7A7;}
+
+p.message {margin:0; padding:10px;font-size: 14px; color: #B1B1B1; float: none;}
+
+</style>
+<body>
+
+
+<div class="formContainer">
+	<form id="emailapi" method="POST">
+		<h1>Add email service to API Table</h1>
+		<p><label>Service:</label> <input name="service" id="emservice" /></p>
+		<p><label>API Key:</label> <input name="apikey" id="emapikey" /></p><br class="clear" />
+		<p><label>Account Email:</label> <input name="acctemail" id="acctemail" /></p>
+		<p><label>Webmaster:</label> <input name="webmaster" id="webmaster" /></p><br class="clear" />
+		<p><input type="submit" value="Send" /></p><br class="clear" />
+		<p class="message">Will create table if necessary.</p>
+	</form>
+</div>
+
+<script>
+
+    var R = window.Rdbhost;
+
+    $(document).ready(function() {
+
+        $.rdbHostConfig({
+                domain:   'www.rdbhost.com',
+                userName: 's0000000014'
+        });
+
+        var $emailForm = $('#emailapi');
+
+        $emailForm.submit(function (ev) {
+
+            var svc = $emailForm.find('#emservice').val(),
+                apikey = $emailForm.find('#emapikey').val(),
+                acctemail = $emailForm.find('#acctemail').val(),
+                webmaster = $emailForm.find('#webmaster').val();
+
+            var p = R.setupEmail({
+
+                service: svc,
+                apikey: apikey,
+                acctemail: acctemail,
+                webmaster: webmaster
+            });
+
+            p.done(function(resp) {
+
+                alert('email apikey added to apis table');
+            });
+            p.fail(function(errArray) {
+
+                alert('email apikey addition failed! '+errArray[1]);
+            })
+        });
+
+    })
+</script>
+
+<div class="formContainer">
+	<form id="chargeapi" method="POST">
+		<h1>Add credit card ('stripe') service to API Table</h1>
+		<p><label>Service</label> <select name="cservice"><option value="stripe">Stripe</option></select></p>
+		<p><label>API Key:</label> <input name="capikey" id="capikey" /></p><br class="clear" />
+		<p><input type="submit" value="Send"  /></p><br class="clear" />
+		<p class="message">Will create apis table if necessary.</p>
+    </form>
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        $.rdbHostConfig({
+            domain:   'www.rdbhost.com',
+            userName: 's0000000014'
+        });
+
+        var $chargeForm = $('#chargeapi');
+        $chargeForm.submit(function (ev) {
+
+            var svc = $chargeForm.find('#cservice').val(),
+                apikey = $chargeForm.find('#capikey').val();
+
+            var p = R.setupCharge({
+
+                service: svc,
+                apikey: apikey
+            });
+
+            p.done(function(resp) {
+
+                alert('charge apikey added to apis table');
+            });
+          p.fail(function(errArray) {
+
+            alert('charge apikey addition failed! ' + errArray[1]);
+          });
+        });
+    })
+</script>
+</body>
+</html>

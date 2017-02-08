@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="fragment" content="!">
+  <title>Email Demo Preauth</title>
+  <link href="css/custom.css" rel="stylesheet">
+  <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/jquery.rdbhost.utils.js"></script>
+  <script language="javascript" src="http://www.rdbhost.com/js/json2.js"></script>
+</head>
+<body>
+<script>
+
+    var R = window.Rdbhost;
+
+    function add_status_line(stat) {
+        var $stat = $('<li>~</li>'.replace('~',stat));
+        $('#status').append($stat);
+    }
+    /*
+     callback function for mail sending
+     */
+    function followUpEmailing(resp) {
+
+        var httpStat = resp.status[0];
+        if (httpStat === 'error') {
+
+            add_status_line('<div>Email was not Sent %s</div>'.replace('%s',resp.error[1]));
+        }
+        else {
+
+            var stat = resp.records.rows[0].result;
+            if (stat === 'Success') {
+
+                add_status_line('<div>Email was sent successfully</div>');
+            }
+            else {
+
+                add_status_line('<div>Error: %s</div>'.replace('%s',stat));
+            }
+        }
+    }
+
+    $(document).ready(function () {
+
+        /*
+         Tell the rdbhost plugin our database login credentials
+         */
+        $.rdbHostConfig({
+            userName : "preauth",
+            accountNumber : 14,
+            domain :   'www.rdbhost.com'
+        });
+
+        /*
+         attach click handler to form button, to send email when form submitted.
+
+         The body is the only user entered part of the email, and is passed as the one param
+         */
+        $('#email-body').submit(function () {
+
+            var body = $('#body').val();
+
+            var p = R.emailWebmaster({
+
+                bodyString: body,
+                // replyTo: jsdemos@travelbyroad.net',
+                subject: 'test subject'
+            });
+
+            p.then(function (resp) {
+
+                if ( resp.row_count[0] === 0 )
+                    alert('no emails sent');
+                else
+                    alert( resp.records.rows[0].result ); // 'Success'
+            }, function(errArry) {
+
+                alert(errArry[1]);  // database error message
+            });
+
+            return false;
+        })
+    })
+
+</script>
+
+<div class="formContainer">
+<h1>Rdbhost Emailing Demo</h1>
+<!-- this div receives status updates  -->
+<div id="status"></div>
+
+<p>This demo sends an email to the webmaster of this site.</p>
+
+<div>
+<form action='' id='email-body'>
+<p><label>Email</label><textarea rows="5" id="body" class="email"> </textarea></p>
+<p><input type="submit" value="go" /></p>
+</form>
+</div>
+<input type="button" value="Back to Home" class="backHome" onclick="location.href='index.html'" />
+</div>
+</body>
+</html>

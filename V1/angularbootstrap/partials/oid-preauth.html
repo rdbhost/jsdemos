@@ -1,0 +1,30 @@
+<h1 class="titlePage">Rdbhost OpenID Login Demo</h1>
+<!-- this div receives status updates  -->
+<ul class="listNone">
+  <li class="alert alert-info" ng-repeat="s in status"><span class="glyphicon glyphicon-info-sign"></span>{{s}}</li>
+</ul>
+
+<form id="openidForm" action="~" method="post" class="form-horizontal">
+  <div class="form-group">
+    <label for="openidurl" class="col-lg-2 control-label">OpenID Identifier URL:</label>
+    <div class="col-lg-9">
+      <input type="text" class="form-control" name="openidurl" id="openidurl" placeholder="URL" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-lg-offset-2 col-lg-10">
+      <input type="submit" class="btn" value="Submit" />
+    </div>
+  </div>
+</form>
+
+<p>Provide your OpenId identifier, complete with http:</p>
+  <b>Examples:</b>
+    <ul class="listNone">
+      <li class="text-info">http://example.livejournal.com</li>
+      <li class="text-info">http://example.myopenid.com</li>
+    </ul>
+
+  <p>The OpenID Provider may ask if you wish to verify ID for
+      "www.rdbhost.com".  Respond "yes", as Rdbhost handles the OpenID
+      verification for us.</p>

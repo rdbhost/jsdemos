@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<title>RdbHost Ajax Indexing Demo</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"> </script>
+    <script src="http://www.rdbhost.com/js/jquery.rdbhost.js"> </script>
+    <script src="http://www.rdbhost.com/js/easyxdm/easyXDM.debug.js"> </script>
+	<script>
+	// wait for DOM to be ready
+    $(document).ready(function () {
+
+	    // record DB access authentication values
+	    $.rdbHostConfig({
+            'userName' : "p0000000014",
+			'authcode' : "-",
+			'domain' : 'www.rdbhost.com'
+        });
+
+		// query to get paragraphs from table
+        var q = 'SELECT * FROM indexable_text';
+		var $tgts = $('#targets');
+		$tgts.attr('id',''); // to prevent re-rendering
+
+		// this func gets run for each record retrieved
+		function eachRow(r) {
+
+				var tag0 = r.tag ? '<'+r.tag+'>' : '',
+			    tag1 = r.tag ? '</'+r.tag+'>' : '';
+		    // append tr to table 
+			$tgts.append('<tr><td>'+tag0+r.body+tag1+'</td></tr>');
+		}
+
+		// this function submits query, and calls eachRow for each row
+        $.eachRecord( {
+            'q' : q,
+			'eachrec' : eachRow
+	    });
+    });
+    </script>
+</head>
+<body>
+  <h3>Rdbhost AJAX Indexing Demo</h3>
+	<p>This html table is populated from the database.  This page is a demo for Rdbhost's support
+	   for AJAX Content Indexing.</p>
+	<p>If you load the page with the url path <i>/ajax_indexing.html</i>, you will see the browser render
+	  the page.  If you load the page with the url path <i>/ajax_indexing.html?_escaped_fragment_=</i> ,
+	  you will see a server side rendering.</p>
+
+  <table id="targets">
+  </table>
+</body></html>
