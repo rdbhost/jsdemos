@@ -2,9 +2,171 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <title>Charge</title>
 </head>
 <body>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+
+<script type="text/javascript" src="https://dev.rdbhost.com/vendor/labjs/LAB.js"></script>
+<script>
+  var $L = $LAB
+      .script('/V2/rdb2js/lib/js/rdb2-bundle.js').wait(
+          function () {
+            if (!Rdbhost.featuredetects.hasPromises())
+              $L = $L.script('/V2/rdb2js/vendor/es6-promises/dist/es6-promise.js');
+            if (!Rdbhost.featuredetects.hasFetch())
+              $L = $L.script('/V2/rdb2js/vendor/fetch/fetch.js').wait();
+          }
+      );
+  $L = $L.script('/V2/rdb2js/lib/js/rdb2-livereload.js')
+      .script('/V2/rdb2js/lib/js/rdb2-charge.js');
+</script>
+
+<h3>Simplified order Form, for Credit-card operations.</h3>
+
+<h4>Test Card Numbers</h4>
+<ul>
+  <li>4242 4242 4242 4242</li>
+  <li>4242 4242 4242 4242</li>
+</ul>
+
+<section>
+  <h4>Unpaid orders</h4>
+
+  <table id="unpaid" rules="all" frame="box">
+    <tr>
+      <th>id</th>
+      <th>items</th>
+      <th>price</th>
+      <th>-</th>
+    </tr>
+
+    <tr>
+      <td>{{id}}</td>
+      <td>{{desc}}</td>
+      <td>{{price}}</td>
+      <td>
+        <button class="pay">Pay</button>
+      </td>
+    </tr>
+  </table>
+
+</section>
+
+<p></p>
+<section>
+  <button id="new-order">Create New (Fake) Order</button>
+</section>
+
+<section>
+  <h4>Paid Orders</h4>
+
+  <table id="paid" rules="all" frame="box">
+    <tr>
+      <th>id</th>
+      <th>items</th>
+      <th>price</th>
+      <th>&nbsp;</th>
+    </tr>
+
+    <tr>
+      <td>{{id}}</td>
+      <td>{{desc}}</td>
+      <td>{{price}}</td>
+      <td></td>
+    </tr>
+  </table>
+
+</section>
+
+
+<script>
+  $L = $L.wait(function () {
+
+    Rdbhost.connect('dev.rdbhost.com', 14);
+    var preauthRef = Rdbhost.preauth();
+    Rdbhost.activate_reloader(preauthRef.clone());
+
+    function create_fake_order() {
+
+      var q = 'INSERT INTO orders (items, price) SELECT "desc", price FROM order_elements ORDER BY random() LIMIT 1;';
+      var preauth = preauthRef.clone(),
+          pr = preauth.query(q).get_data();
+      pr.then(function(d) {
+        alert('hi')
+      });
+    }
+    document.getElementById('new-order').onclick = create_fake_order;
+
+
+    var unPaidTbl = document.getElementById('unpaid'),
+        unPaidRow = unPaidTbl.getElementsByTagName('tr')[1];
+    unPaidRow.parentElement.removeChild(unPaidRow);
+    var unPaidRowTpl = unPaidRow.outerHTML;
+
+    var paidTbl = document.getElementById('paid'),
+        paidRow = paidTbl.getElementsByTagName('tr')[1];
+    paidRow.parentElement.removeChild(paidRow);
+    var paidRowTpl = paidRow.outerHTML;
+
+    function load_orders() {
+
+      function insertRow(el, rowTxt) {
+
+        var t = document.createElement('tbody');
+        t.innerHTML = rowTxt;
+        for (var i = 0; i < t.childNodes.length; i++) {
+          el.appendChild(t.childNodes[i]);
+        }
+      }
+
+      var q = 'SELECT id, items, price FROM orders;\n' +
+          'SELECT id, items, price, NULL AS confirm FROM orders WHERE false\n;';
+
+      var preauth = preauthRef.clone(),
+          pr = preauth.query(q).get_data();
+
+      pr.then(function (d) {
+
+        var unpaid = d.result_sets[0].records,
+            paid = d.result_sets[1].records,
+            row, up, p;
+
+        // populate unpaid-orders html table
+        //
+        unPaidTbl.getElementsByTagName('tbody').innerHTML = '';
+
+        for (var _up in unpaid.rows) {
+          if (!unpaid.rows.hasOwnProperty(_up))
+            continue;
+          up = unpaid.rows[_up];
+          row = unPaidRowTpl.replace('{{id}}', up.id).replace('{{desc}}', up.items)
+              .replace('{{price}}', up.price);
+          insertRow(unPaidTbl, row);
+        }
+
+        // populate paid-orders html table
+        //
+        paidTbl.getElementsByTagName('tbody').innerHTML = '';
+
+        for (var _p in paid.rows) {
+          if (!paid.rows.hasOwnProperty(_p))
+            continue;
+          p = paid.rows[_p];
+          row = paidRowTpl.replace('{{id}}', p.id).replace('{{desc}}', p.items)
+              .replace('{{price}}', p.price);
+          insertRow(paidTbl, row);
+        }
+      })
+      .catch(function (e) {
+        debugger;
+      })
+
+    }
+
+    load_orders();
+  });
+</script>
 </body>
 </html>
