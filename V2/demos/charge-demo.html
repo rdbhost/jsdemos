@@ -35,13 +35,16 @@
   <h4>Unpaid orders</h4>
 
   <table id="unpaid" rules="all" frame="box">
+    <thead>
     <tr>
       <th>id</th>
       <th>items</th>
       <th>price</th>
       <th>-</th>
     </tr>
+    </thead>
 
+    <tbody>
     <tr>
       <td>{{id}}</td>
       <td>{{desc}}</td>
@@ -50,6 +53,7 @@
         <button class="pay">Pay</button>
       </td>
     </tr>
+    </tbody>
   </table>
 
 </section>
@@ -63,19 +67,23 @@
   <h4>Paid Orders</h4>
 
   <table id="paid" rules="all" frame="box">
+    <thead>
     <tr>
       <th>id</th>
       <th>items</th>
       <th>price</th>
       <th>&nbsp;</th>
     </tr>
+    </thead>
 
+    <tbody>
     <tr>
       <td>{{id}}</td>
       <td>{{desc}}</td>
       <td>{{price}}</td>
       <td></td>
     </tr>
+    </tbody>
   </table>
 
 </section>
@@ -100,15 +108,22 @@
     document.getElementById('new-order').onclick = create_fake_order;
 
 
-    var unPaidTbl = document.getElementById('unpaid'),
-        unPaidRow = unPaidTbl.getElementsByTagName('tr')[1];
-    unPaidRow.parentElement.removeChild(unPaidRow);
-    var unPaidRowTpl = unPaidRow.outerHTML;
+    function prep_table(id) {
 
-    var paidTbl = document.getElementById('paid'),
-        paidRow = paidTbl.getElementsByTagName('tr')[1];
-    paidRow.parentElement.removeChild(paidRow);
-    var paidRowTpl = paidRow.outerHTML;
+      var tbl = document.getElementById(id),
+          tb = tbl.getElementsByTagName('tbody')[0],
+          tr = tb.getElementsByTagName('tr')[0];
+      tr.parentElement.removeChild(tr);
+      return [tbl, tr.outerHTML];
+    }
+
+    var _t1 = prep_table('unpaid'),
+        unPaidTbl = _t1[0],
+        unPaidRowTpl = _t1[1];
+
+    var _t0 = prep_table('paid'),
+        paidTbl = _t0[0],
+        paidRowTpl = _t0[1];
 
     function load_orders() {
 
