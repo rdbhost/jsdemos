@@ -3,6 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>Charge</title>
+
+  <style>
+    #pay-popup, #refund-popup {
+      align: auto;
+      height: 200px;
+      width: 200px;
+      position: absolute;
+      top: 200px;
+      left: 200px;
+      background: white;
+      border: double black;
+      padding: 20px;
+    }
+  </style>
+
 </head>
 <body>
 
@@ -28,13 +43,13 @@
 <h4>Test Card Numbers</h4>
 <ul>
   <li>4242 4242 4242 4242</li>
-  <li>4242 4242 4242 4242</li>
+  <li>5555 5555 5555 4444</li>
 </ul>
 
 <section>
   <h4>Unpaid orders</h4>
 
-  <table id="unpaid" rules="all" frame="box">
+  <table id="unpaid" rules="all" frame="box" hidden>
     <thead>
     <tr>
       <th>id</th>
@@ -60,19 +75,20 @@
 
 <p></p>
 <section>
-  <button id="new-order">Create New (Fake) Order</button>
+  <button id="new-order">Create New Order</button>
 </section>
 
 <section>
   <h4>Paid Orders</h4>
 
-  <table id="paid" rules="all" frame="box">
+  <table id="paid" rules="all" frame="box" hidden>
     <thead>
     <tr>
       <th>id</th>
       <th>items</th>
       <th>price</th>
-      <th>&nbsp;</th>
+      <th>confirm code</th>
+      <th>-</th>
     </tr>
     </thead>
 
@@ -81,12 +97,46 @@
       <td>{{id}}</td>
       <td>{{desc}}</td>
       <td>{{price}}</td>
-      <td></td>
+      <td>{{confirm}}</td>
+      <td>
+        <button class="refund">Refund</button>
+      </td>
     </tr>
     </tbody>
   </table>
 
 </section>
+
+<div style="display:none" id="pay-popup" frame="box">
+  <h4>Pay for Order</h4>
+  <button id="close-pay">[x]</button><br/>
+
+  Order: <span class="order-num"></span><br/>
+  Price: $<span class="price"></span>
+  <input id="price" name="price" type="hidden">
+  <input id="order-num" name="order-num" type="hidden"><br/>
+
+  <span class="pay-error-msg"></span>
+
+  <input id="cc_num" name="cc_num" size="20"><br/>
+  <input id="cc_mon" name="cc_mon" size="2">
+  <input id="cc_yr" name="cc_yr" size="2">
+  <input id="cc_cvc" name="cc_cvc" size="3"><br/>
+
+  <button id="pay-order">Pay for Order</button>
+</div>
+<div style="display:none" id="refund-popup" frame="box">
+  <h4>Refund Charge</h4>
+  <button id="close-refund">[x]</button><br/>
+
+  Amount: $<span class="price"></span>
+  <input id="refund-amt" name="refund-amt" type="hidden"><br/>
+
+  <span class="refund-error-msg"></span>
+  <input id="confirm-code" name="confirm-code" size="20"><br/>
+
+  <button id="refund-charge">Refund the Charge</button>
+</div>
 
 
 <script>
@@ -96,48 +146,127 @@
     var preauthRef = Rdbhost.preauth();
     Rdbhost.activate_reloader(preauthRef.clone());
 
-    function create_fake_order() {
+    $(document).on('click', '.pay', function(evt) {
+
+      var $idTd = $(evt.target).closest('tr').find('td').first(),
+          order_id = $idTd.text(),
+          $priceTd = $(evt.target).closest('tr').find('td:nth-child(3)'),
+          price = $priceTd.text();
+
+      $('#pay-popup .order-num').text(order_id);
+      $('#pay-popup .pay-error-msg').text();
+      $('#pay-popup .price').text(price);
+      $('#price').val(price);
+      $('#order-num').val(order_id);
+      $('#cc_num').val('');
+      $('#cc_yr').val('');
+      $('#cc_mon').val('');
+      $('#cc_cvc').val('');
+
+      $('#pay-popup').show();
+    });
+    $('#close-pay').click(function(evt) {
+      $('#pay-popup').hide();
+    });
+    $('#pay-order').click(function(evt) {
+
+      var price = $('#price').val(),
+          order_id = $('#order-num').val(),
+          cc_num = $('#cc_num').val(),
+          cc_exp_mon = $('#cc_mon').val(),
+          cc_exp_yr = $('#cc_yr').val(),
+          cc_cvc = $('#cc_cvc').val();
+
+      if ( !cc_num || !cc_exp_mon || !cc_exp_yr || !cc_cvc )
+        return;
+
+      var preauth = Rdbhost.Charge.preauth();
+      var pr = preauth
+          .query("SELECT id AS idx, (price*100)::INT AS amount, items AS description \
+        FROM orders WHERE id = %(order)s")
+          .params({'order': order_id})
+          .charge(cc_num, cc_cvc, cc_exp_mon, cc_exp_yr);
+
+      pr.then(function (d) {
+            $('#pay-popup').hide();
+            load_orders();
+          })
+          .catch(function(e) {
+            $('#pay-popup .pay-error-msg').text(e.message);
+          });
+    });
+
+    $(document).on('click', '.refund', function(evt) {
+
+      var $confirmTd = $(evt.target).closest('tr').find('td:nth-child(4)').first(),
+          confirmCode = $confirmTd.text(),
+          $priceTd = $(evt.target).closest('tr').find('td:nth-child(3)'),
+          price = $priceTd.text();
+
+      $('#refund-popup .pay-error-msg').text('');
+      $('#refund-popup .price').text(price);
+      $('#refund-amt').val(price);
+      $('#confirm-code').val(confirmCode);
+
+      $('#refund-popup').show();
+    });
+    $('#close-refund').click(function(evt) {
+      $('#refund-popup').hide();
+    });
+    $('#refund-charge').click(function(evt) {
+
+      var price = $('#price').val(),
+          confirm_code = $('#confirm-code').val();
+
+      var preauth = Rdbhost.Charge.preauth();
+      var pr = preauth
+          .query("SELECT c.idx AS idx, c.id AS id, c.amount AS amount \
+        FROM charges c WHERE id = %(confirm_code)s")
+          .params({'confirm_code': confirm_code})
+          .refund();
+
+      pr.then(function (d) {
+            $('#refund-popup').hide();
+            load_orders();
+          })
+          .catch(function(e) {
+            $('#refund-popup .pay-error-msg').text(e.message);
+          });
+    });
+
+    $('#new-order').click(function() {
 
       var q = 'INSERT INTO orders (items, price) SELECT "desc", price FROM order_elements ORDER BY random() LIMIT 1;';
       var preauth = preauthRef.clone(),
           pr = preauth.query(q).get_data();
       pr.then(function(d) {
-        alert('hi')
+        load_orders();
       });
-    }
-    document.getElementById('new-order').onclick = create_fake_order;
+    });
 
 
     function prep_table(id) {
 
-      var tbl = document.getElementById(id),
-          tb = tbl.getElementsByTagName('tbody')[0],
-          tr = tb.getElementsByTagName('tr')[0];
-      tr.parentElement.removeChild(tr);
-      return [tbl, tr.outerHTML];
+      var $tbl = $('#' + id),
+          $th = $tbl.find('tr').first().remove(),
+          $tr = $tbl.find('tr').first();
+      return {
+        '$table': $tbl,
+        '$th': $th,
+        'tpl': $tr[0].outerHTML
+      }
     }
 
-    var _t1 = prep_table('unpaid'),
-        unPaidTbl = _t1[0],
-        unPaidRowTpl = _t1[1];
-
-    var _t0 = prep_table('paid'),
-        paidTbl = _t0[0],
-        paidRowTpl = _t0[1];
+    var unPaidTblData = prep_table('unpaid');
+    var paidTblData = prep_table('paid');
 
     function load_orders() {
 
-      function insertRow(el, rowTxt) {
-
-        var t = document.createElement('tbody');
-        t.innerHTML = rowTxt;
-        for (var i = 0; i < t.childNodes.length; i++) {
-          el.appendChild(t.childNodes[i]);
-        }
-      }
-
-      var q = 'SELECT id, items, price FROM orders;\n' +
-          'SELECT id, items, price, NULL AS confirm FROM orders WHERE false\n;';
+      var q =  'SELECT o.id, o.items, o.price \n' +
+               '  FROM orders o LEFT JOIN unrefunded_charges c ON (o.id::VARCHAR = c.idx)\n' +
+               ' WHERE (c.paid IS NULL OR NOT c.paid);\n' +
+               'SELECT o.id, o.items, o.price, c.id AS confirm \n' +
+               '  FROM orders o JOIN unrefunded_charges c ON (o.id::VARCHAR = c.idx AND c.paid);\n';
 
       var preauth = preauthRef.clone(),
           pr = preauth.query(q).get_data();
@@ -150,29 +279,34 @@
 
         // populate unpaid-orders html table
         //
-        unPaidTbl.getElementsByTagName('tbody').innerHTML = '';
+        unPaidTblData.$table.empty();
+        unPaidTblData.$table.append(unPaidTblData.$th);
 
         for (var _up in unpaid.rows) {
           if (!unpaid.rows.hasOwnProperty(_up))
             continue;
           up = unpaid.rows[_up];
-          row = unPaidRowTpl.replace('{{id}}', up.id).replace('{{desc}}', up.items)
+          row = unPaidTblData.tpl.replace('{{id}}', up.id).replace('{{desc}}', up.items)
               .replace('{{price}}', up.price);
-          insertRow(unPaidTbl, row);
+          unPaidTblData.$table.append(row);
         }
+        unPaidTblData.$table.show();
 
         // populate paid-orders html table
         //
-        paidTbl.getElementsByTagName('tbody').innerHTML = '';
+        paidTblData.$table.empty();
+        paidTblData.$table.append(paidTblData.$th);
 
         for (var _p in paid.rows) {
           if (!paid.rows.hasOwnProperty(_p))
             continue;
           p = paid.rows[_p];
-          row = paidRowTpl.replace('{{id}}', p.id).replace('{{desc}}', p.items)
-              .replace('{{price}}', p.price);
-          insertRow(paidTbl, row);
+          row = paidTblData.tpl.replace('{{id}}', p.id).replace('{{desc}}', p.items)
+              .replace('{{price}}', p.price).replace('{{confirm}}', p.confirm);
+          paidTblData.$table.append(row);
         }
+        paidTblData.$table.show();
+
       })
       .catch(function (e) {
         debugger;

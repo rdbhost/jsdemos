@@ -44,21 +44,27 @@
      */
     function charge(cc_num, cc_cvc, cc_exp_mon, cc_exp_yr) {
 
+        function rejected(s) {
+            var e = new Error(s);
+            return Promise.reject(e);
+        }
         if (arguments.length < 4)
-            throw new Error('too few arguments provided to charge');
+            return rejected('too few arguments provided');
         if (!cc_num || cc_num.length < 16)
-            throw new Error('invalid credit-card number provided to charge');
-        if (!cc_exp_mon || cc_exp_mon.length < 2)
-            throw new Error('invalid month argument provided to charge');
-        if (!cc_exp_yr || cc_exp_yr.length < 2)
-            throw new Error('invalid month argument provided to charge');
+            return rejected('invalid credit-card number provided');
+        if (!cc_exp_mon || cc_exp_mon.length > 2)
+            return rejected('invalid month argument [{}] provided'.replace('{}', cc_exp_mon));
+        if (!cc_exp_yr || cc_exp_yr.length > 2)
+            return rejected('invalid year argument [{}] provided'.replace('{}', cc_exp_yr));
+        if (!cc_cvc || cc_cvc.length > 3)
+            return rejected('invalid cvc argument [{}] provided'.replace('{}', cc_cvc));
 
         // create request_hook, to create charge query from data query
         //
         var f = function(this_) {
 
             if (this_.qPlus)
-                throw new Error('listen() method must be called after charge(), if needed');
+                return rejected('listen() method must be called after charge(), if needed');
             this_.namedParams = this_.namedParams || {};
 
             var postcall = (this_.namedParams.postcall || postCall).replace(/'/g, "''"),
@@ -157,14 +163,6 @@
         return this.get_data();
     }
 
-/*
-    preauth: function(rdgw, rdgh) { return connection_constructor('preauth', null, rdgw, rdgh) },
-    auth: function(authcode, rdgw, rdgh) { return connection_constructor('auth', authcode, rdgw, rdgh) },
-    super: function(authcode, rdgw, rdgh) { return connection_constructor('super', authcode, rdgw, rdgh) },
-    reader: function(rdgw, rdgh) { return connection_constructor('reader', null, rdgw, rdgh) },
-*/
-// todo - create new Rdbhost.Charge object,
-
     function add_charge_and_refund(ro) {
         ro.charge = charge;
         ro.refund = refund;
@@ -228,7 +226,7 @@
                           paid BOOLEAN, \
                           refunded BOOLEAN, \
                           last4 VARCHAR(4), \
-                          error VARCHAR(50) \
+                          error VARCHAR(150) \
                         );';
 
     function create_charges_table() {
@@ -269,7 +267,7 @@
         function on_submit(f, resolve) {
             var eml = f.querySelector("input[name='email']"),
                 apikey = f.querySelector("input[name='apikey']");
-            resolve([apikey, eml]);
+            resolve([apikey.value, eml.value]);
             return true;
         }
         function populate_form(f, kws) {

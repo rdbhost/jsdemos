@@ -2004,7 +2004,7 @@
     }
 
 
-    function reset(cb) {
+    function reset(cb, clean) {
 
         if (conns)
             close_connections(1000, 'reset');
@@ -2019,7 +2019,6 @@
 
         events = new TinyEmitter;
         window.Rdbhost = _.extend(window.Rdbhost, {
-
             // export event methods
             on: events.on.bind(events),
             off: events.off.bind(events),
@@ -2027,8 +2026,10 @@
         });
 
         // clean up caches - useful for testing purposes
-        requestObjectPrototype.authorization_cache = {};
-        save_credentials_cache({});
+        if (clean) {
+            requestObjectPrototype.authorization_cache = {};
+            save_credentials_cache({});
+        }
 
         // help with diagnosing cors errors
         //
@@ -2107,6 +2108,6 @@
 
     });
 
-    reset();
+    reset(undefined, false);
 
 })(window);
