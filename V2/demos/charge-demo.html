@@ -5,7 +5,7 @@
   <title>Charge</title>
 
   <style>
-    #pay-popup, #refund-popup {
+    #pay-popup, #refund-popup, #result-popup {
       align: auto;
       height: 200px;
       width: 200px;
@@ -41,9 +41,18 @@
 <h3>Simplified order Form, for Credit-card operations.</h3>
 
 <h4>Test Card Numbers</h4>
+<p>The Stripe.Com account used here is a test account, so only test card numbers can be used.
+Use one of these, or see a more complete list at <a href="https://stripe.com/docs/testing#cards">Stripe</a>.
+  Use a future expiration date for success, past for failure.</p>
+<h5>Good Numbers</h5>
 <ul>
   <li>4242 4242 4242 4242</li>
   <li>5555 5555 5555 4444</li>
+</ul>
+<h5>Bad Numbers</h5>
+<ul>
+  <li>4000 0000 0000 0101</li>
+  <li>4000 0000 0000 0002</li>
 </ul>
 
 <section>
@@ -137,6 +146,12 @@
 
   <button id="refund-charge">Refund the Charge</button>
 </div>
+<div style="display:none" id="result-popup" frame="box">
+  <h4>Result</h4>
+  <button id="close-result">[x]</button><br/>
+
+  <span class="message"></span>
+</div>
 
 
 <script>
@@ -189,6 +204,9 @@
 
       pr.then(function (d) {
             $('#pay-popup').hide();
+            var res = d.result_sets[0].rows[0].result;
+            $('#result-popup .message').text(res);
+            $('#result-popup').show();
             load_orders();
           })
           .catch(function(e) {
@@ -227,6 +245,12 @@
 
       pr.then(function (d) {
             $('#refund-popup').hide();
+            var res = d.result_sets[0].rows;
+            if ( !res )
+              $('#result-popup .message').text('Charge not found');
+            else
+              $('#result-popup .message').text(res);
+            $('#result-popup').show();
             load_orders();
           })
           .catch(function(e) {
@@ -242,6 +266,9 @@
       pr.then(function(d) {
         load_orders();
       });
+    });
+    $('#close-result').click(function(evt) {
+      $('#result-popup').hide();
     });
 
 
