@@ -5,16 +5,50 @@
   <title>Charge</title>
 
   <style>
+    div.main {
+      margin: auto;
+      width: 700px;
+    }
+
+    div.advice {
+      background-color: #9FAFD1;
+      width: 70%;
+      padding: 8px 2em 8px 2em;
+    }
+
+    h3 {
+      margin-top: 2em;
+    }
+    .ralign {
+      text-align: right;
+    }
+
+    table {
+      background-color: lightblue;
+    }
+    table td {
+      padding: 12px;
+    }
+    table th {
+      background-color: #999999 ;
+    }
+
     #pay-popup, #refund-popup, #result-popup {
       align: auto;
       height: 200px;
       width: 200px;
-      position: absolute;
+      position: fixed;
       top: 200px;
-      left: 200px;
-      background: white;
+      left: 350px;
+      background: lightsalmon;
       border: double black;
       padding: 20px;
+    }
+    #close-pay, #close-result, #close-refund {
+      float: right;
+    }
+    button {
+      margin: 6px;
     }
   </style>
 
@@ -38,87 +72,92 @@
       .script('https://devsrc.rdbhost.com/lib/js/rdb2-charge.js');
 </script>
 
-<h3>Simplified order Form, for Credit-card operations.</h3>
+<div class="main">
 
-<h4>Test Card Numbers</h4>
-<p>The Stripe.Com account used here is a test account, so only test card numbers can be used.
-Use one of these, or see a more complete list at <a href="https://stripe.com/docs/testing#cards">Stripe</a>.
-  Use a future expiration date for success, past for failure.</p>
-<h5>Good Numbers</h5>
-<ul>
-  <li>4242 4242 4242 4242</li>
-  <li>5555 5555 5555 4444</li>
-</ul>
-<h5>Bad Numbers</h5>
-<ul>
-  <li>4000 0000 0000 0101</li>
-  <li>4000 0000 0000 0002</li>
-</ul>
+  <h2>Simplified Order Form, for Credit-Card Operations.</h2>
 
-<section>
-  <h4>Unpaid orders</h4>
+  <div class="advice">
+    <h4>Test Card Numbers</h4>
+    <p>The Stripe.Com account used here is a test account, so only test card numbers can be used.
+      Use one of these, or see a more complete list at <a href="https://stripe.com/docs/testing#cards">Stripe</a>.
+      Use a future expiration date for success, past for failure.</p>
+    <h5>Good Numbers</h5>
+    <ul>
+      <li>4242 4242 4242 4242</li>
+      <li>5555 5555 5555 4444</li>
+    </ul>
+    <h5>Bad Numbers</h5>
+    <ul>
+      <li>4000 0000 0000 0101</li>
+      <li>4000 0000 0000 0002</li>
+    </ul>
+  </div>
+  <section>
+    <h3>Unpaid orders</h3>
 
-  <table id="unpaid" rules="all" frame="box" hidden>
-    <thead>
-    <tr>
-      <th>id</th>
-      <th>items</th>
-      <th>price</th>
-      <th>-</th>
-    </tr>
-    </thead>
+    <table id="unpaid" rules="all" frame="box" hidden>
+      <thead>
+      <tr>
+        <th>id</th>
+        <th>items</th>
+        <th>price</th>
+        <th>-</th>
+      </tr>
+      </thead>
 
-    <tbody>
-    <tr>
-      <td>{{id}}</td>
-      <td>{{desc}}</td>
-      <td>{{price}}</td>
-      <td>
-        <button class="pay">Pay</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      <tbody>
+      <tr>
+        <td>{{id}}</td>
+        <td>{{desc}}</td>
+        <td class="ralign">$&nbsp;{{price}}</td>
+        <td>
+          <button class="pay">Pay</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
 
-</section>
+  </section>
 
-<p></p>
-<section>
-  <button id="new-order">Create New Order</button>
-</section>
+  <p></p>
+  <section>
+    <button id="new-order">Create New Order</button>
+  </section>
 
-<section>
-  <h4>Paid Orders</h4>
+  <section>
+    <h3>Paid Orders</h3>
 
-  <table id="paid" rules="all" frame="box" hidden>
-    <thead>
-    <tr>
-      <th>id</th>
-      <th>items</th>
-      <th>price</th>
-      <th>confirm code</th>
-      <th>-</th>
-    </tr>
-    </thead>
+    <table id="paid" rules="all" frame="box" hidden>
+      <thead>
+      <tr>
+        <th>id</th>
+        <th>items</th>
+        <th>price</th>
+        <th>confirm code</th>
+        <th>-</th>
+      </tr>
+      </thead>
 
-    <tbody>
-    <tr>
-      <td>{{id}}</td>
-      <td>{{desc}}</td>
-      <td>{{price}}</td>
-      <td>{{confirm}}</td>
-      <td>
-        <button class="refund">Refund</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+      <tbody>
+      <tr>
+        <td>{{id}}</td>
+        <td>{{desc}}</td>
+        <td class="ralign">$&nbsp;{{price}}</td>
+        <td>{{confirm}}</td>
+        <td>
+          <button class="refund">Refund</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
 
-</section>
+  </section>
 
+  <p> &nbsp; </p>
+</div>
 <div style="display:none" id="pay-popup" frame="box">
-  <h4>Pay for Order</h4>
   <button id="close-pay">[x]</button><br/>
+  <h4>Pay for Order</h4>
 
   Order: <span class="order-num"></span><br/>
   Price: $<span class="price"></span>
@@ -135,8 +174,8 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
   <button id="pay-order">Pay for Order</button>
 </div>
 <div style="display:none" id="refund-popup" frame="box">
-  <h4>Refund Charge</h4>
   <button id="close-refund">[x]</button><br/>
+  <h4>Refund Charge</h4>
 
   Amount: $<span class="price"></span>
   <input id="refund-amt" name="refund-amt" type="hidden"><br/>
@@ -147,8 +186,8 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
   <button id="refund-charge">Refund the Charge</button>
 </div>
 <div style="display:none" id="result-popup" frame="box">
-  <h4>Result</h4>
   <button id="close-result">[x]</button><br/>
+  <h4>Result</h4>
 
   <span class="message"></span>
 </div>
@@ -157,11 +196,16 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
 <script>
   $L = $L.wait(function () {
 
+    // setup connection to database
     Rdbhost.connect('dev.rdbhost.com', 14);
     var preauthRef = Rdbhost.preauth();
     Rdbhost.activate_reloader(preauthRef.clone());
 
+
     $(document).on('click', '.pay', function(evt) {
+      /* on order pay-button click, show and populate
+        cc form.
+      */
 
       var $idTd = $(evt.target).closest('tr').find('td').first(),
           order_id = $idTd.text(),
@@ -180,10 +224,17 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
 
       $('#pay-popup').show();
     });
+
     $('#close-pay').click(function(evt) {
+      // close pay popup
       $('#pay-popup').hide();
     });
+
     $('#pay-order').click(function(evt) {
+
+      /* on pay-form submit, pull cc data and order id from pay form, submit to server
+         handle error if any, reload tables on success.
+      */
 
       var price = $('#price').val(),
           order_id = $('#order-num').val(),
@@ -215,6 +266,9 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
     });
 
     $(document).on('click', '.refund', function(evt) {
+      /* on paid-order refund-button click,
+        show and populate refund form.
+      */
 
       var $confirmTd = $(evt.target).closest('tr').find('td:nth-child(4)').first(),
           confirmCode = $confirmTd.text(),
@@ -223,17 +277,21 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
 
       $('#refund-popup .pay-error-msg').text('');
       $('#refund-popup .price').text(price);
-      $('#refund-popup .price').text(price);
       $('#refund-amt').val(price);
       $('#confirm-code').val(confirmCode);
 
       $('#refund-popup').show();
     });
+
     $('#close-refund').click(function(evt) {
+      // close refund form
       $('#refund-popup').hide();
     });
-    $('#refund-charge').click(function(evt) {
 
+    $('#refund-charge').click(function(evt) {
+      /* on refund-form submit, get data from form, submit request to server,
+         handle error if any, reshow tables on success
+      */
       var price = $('#price').val(),
           confirm_code = $('#confirm-code').val();
 
@@ -260,7 +318,8 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
     });
 
     $('#new-order').click(function() {
-
+      /* add new unpaid order to orders db, from random source
+      */
       var q = 'INSERT INTO orders (items, price) SELECT "desc", price FROM order_elements ORDER BY random() LIMIT 1;';
       var preauth = preauthRef.clone(),
           pr = preauth.query(q).get_data();
@@ -274,7 +333,8 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
 
 
     function prep_table(id) {
-
+      /* extract reusable items from html table, for use in rendering tables with data.
+      */
       var $tbl = $('#' + id),
           $th = $tbl.find('tr').first().remove(),
           $tr = $tbl.find('tr').first();
@@ -289,7 +349,8 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
     var paidTblData = prep_table('paid');
 
     function load_orders() {
-
+      /*  pull order data from server, to pupulate two order tables.
+       */
       var q =  'SELECT o.id, o.items, o.price \n' +
                '  FROM orders o LEFT JOIN unrefunded_charges c ON (o.id::VARCHAR = c.idx)\n' +
                ' WHERE (c.paid IS NULL OR NOT c.paid);\n' +
@@ -305,8 +366,7 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
             paid = d.result_sets[1].records,
             row, up, p;
 
-        // populate unpaid-orders html table
-        //
+        // populate unpaid-orders html table with server data
         unPaidTblData.$table.empty();
         unPaidTblData.$table.append(unPaidTblData.$th);
 
@@ -320,8 +380,7 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
         }
         unPaidTblData.$table.show();
 
-        // populate paid-orders html table
-        //
+        // populate paid-orders html table with server data
         paidTblData.$table.empty();
         paidTblData.$table.append(paidTblData.$th);
 
@@ -342,6 +401,7 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
 
     }
 
+    // initial load of table data
     load_orders();
   });
 </script>
