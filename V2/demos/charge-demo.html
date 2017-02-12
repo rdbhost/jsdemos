@@ -23,19 +23,19 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 
-<script type="text/javascript" src="https://dev.rdbhost.com/vendor/labjs/LAB.js"></script>
+<script type="text/javascript" src="https://devsrc.rdbhost.com/vendor/labjs/LAB.js"></script>
 <script>
   var $L = $LAB
-      .script('/V2/rdb2js/lib/js/rdb2-bundle.js').wait(
+      .script('https://devsrc.rdbhost.com/lib/js/rdb2-bundle.js').wait(
           function () {
             if (!Rdbhost.featuredetects.hasPromises())
-              $L = $L.script('/V2/rdb2js/vendor/es6-promises/dist/es6-promise.js');
+              $L = $L.script('https://devsrc.rdbhost.com/vendor/es6-promises/dist/es6-promise.js');
             if (!Rdbhost.featuredetects.hasFetch())
-              $L = $L.script('/V2/rdb2js/vendor/fetch/fetch.js').wait();
+              $L = $L.script('https://devsrc.rdbhost.com/vendor/fetch/fetch.js').wait();
           }
       );
-  $L = $L.script('/V2/rdb2js/lib/js/rdb2-livereload.js')
-      .script('/V2/rdb2js/lib/js/rdb2-charge.js');
+  $L = $L.script('https://devsrc.rdbhost.com/lib/js/rdb2-livereload.js')
+      .script('https://devsrc.rdbhost.com/lib/js/rdb2-charge.js');
 </script>
 
 <h3>Simplified order Form, for Credit-card operations.</h3>
@@ -169,7 +169,7 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
           price = $priceTd.text();
 
       $('#pay-popup .order-num').text(order_id);
-      $('#pay-popup .pay-error-msg').text();
+      $('#pay-popup .pay-error-msg').text('');
       $('#pay-popup .price').text(price);
       $('#price').val(price);
       $('#order-num').val(order_id);
@@ -223,6 +223,7 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
 
       $('#refund-popup .pay-error-msg').text('');
       $('#refund-popup .price').text(price);
+      $('#refund-popup .price').text(price);
       $('#refund-amt').val(price);
       $('#confirm-code').val(confirmCode);
 
@@ -249,7 +250,7 @@ Use one of these, or see a more complete list at <a href="https://stripe.com/doc
             if ( !res )
               $('#result-popup .message').text('Charge not found');
             else
-              $('#result-popup .message').text(res);
+              $('#result-popup .message').text(res[0].result);
             $('#result-popup').show();
             load_orders();
           })
