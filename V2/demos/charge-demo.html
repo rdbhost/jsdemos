@@ -197,8 +197,10 @@
 <script>
   $L = $L.wait(function () {
 
-    // setup connection to database
-    Rdbhost.connect('dev.rdbhost.com', 14);
+    var DB_HOST = window.location.href.indexOf('devd') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
+
+      // setup connection to database
+    Rdbhost.connect(DB_HOST, 14);
     var preauthRef = Rdbhost.preauth();
     Rdbhost.activate_reloader(preauthRef.clone());
 
