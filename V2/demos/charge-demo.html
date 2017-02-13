@@ -57,19 +57,20 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 
-<script type="text/javascript" src="https://devsrc.rdbhost.com/vendor/labjs/LAB.js"></script>
+<script type="text/javascript" src="//src.rdbhost.com/2.1/vendor/labjs/LAB.js"></script>
 <script>
+  var HOST = window.location.href.indexOf('devd') > -1 ? 'devsrc.rdbhost.com' : 'src.rdbhost.com';
   var $L = $LAB
-      .script('https://devsrc.rdbhost.com/lib/js/rdb2-bundle.js').wait(
+      .script('//'+HOST+'/2.1/lib/js/rdb2-bundle.js').wait(
           function () {
             if (!Rdbhost.featuredetects.hasPromises())
-              $L = $L.script('https://devsrc.rdbhost.com/vendor/es6-promises/dist/es6-promise.js');
+              $L = $L.script('//'+HOST+'/2.1/vendor/es6-promises/dist/es6-promise.js');
             if (!Rdbhost.featuredetects.hasFetch())
-              $L = $L.script('https://devsrc.rdbhost.com/vendor/fetch/fetch.js').wait();
+              $L = $L.script('//'+HOST+'/2.1/vendor/fetch/fetch.js').wait();
           }
       );
-  $L = $L.script('https://devsrc.rdbhost.com/lib/js/rdb2-livereload.js')
-      .script('https://devsrc.rdbhost.com/lib/js/rdb2-charge.js');
+  $L = $L.script('//'+HOST+'/2.1/lib/js/rdb2-livereload.js')
+      .script('//'+HOST+'/2.1/lib/js/rdb2-charge.js');
 </script>
 
 <div class="main">
