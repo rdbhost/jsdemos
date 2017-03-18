@@ -185,8 +185,15 @@
           c = Rdbhost.Email.column_wrapper;
 
       var preauth = Rdbhost.Email.preauth();
-      var p = preauth.query('SELECT joke FROM sql_jokes WHERE idx = %s').params([jokeId])
+      var p = preauth.query('SELECT joke, idx FROM sql_jokes WHERE idx = %s').params([jokeId])
           .email(f('David'), f('dkeeney@here.now'), f('You'), emailAddress, f('Demo'), c('joke'));
+
+      p.then(function(d) {
+            debugger;
+          })
+          .catch(function(e) {
+            debugger;
+          })
 
     });
 

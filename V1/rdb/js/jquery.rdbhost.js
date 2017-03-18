@@ -95,7 +95,7 @@ window.Rdbhost = {};
 
   // function to load easyXDM on-demand during run-time
   //
-  var easyXDMPath = 'https://www.rdbhost.com/js/easyxdm/easyXDM.min.js';
+  var easyXDMPath = 'https://www.rdbhost.com/mbr-assets/js/easyxdm/easyXDM.min.js';
   function lateLoadEasyXDM(fn) {
 
     var yn = window.yepnope || (window.Modernizr && window.Modernizr.load) || null;
