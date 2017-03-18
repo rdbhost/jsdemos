@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emailing</title>
+
+  <style>
+    div.main {
+      margin: auto;
+      width: 700px;
+    }
+
+    div.advice {
+      background-color: #9FAFD1;
+      width: 70%;
+      padding: 8px 2em 8px 2em;
+    }
+
+    div.form {
+      background-color: #8f9fc1;
+      width: 70%;
+      padding: 8px 2em 8px 2em;
+      margin-bottom: 2em;
+    }
+    div.form textarea {
+      width: 30em;
+      height: 8em;
+    }
+
+    h3 {
+      margin-top: 2em;
+    }
+    .ralign {
+      text-align: right;
+    }
+
+    table {
+      background-color: lightblue;
+      width: 40em;
+    }
+    table td {
+      padding: 12px;
+    }
+    table th {
+      background-color: #999999 ;
+    }
+
+/*
+    #pay-popup, #refund-popup, #result-popup {
+
+      align: auto;
+      height: 200px;
+      width: 200px;
+      position: fixed;
+      top: 200px;
+      left: 350px;
+      background: lightsalmon;
+      border: double black;
+      padding: 20px;
+    }
+    #close-pay, #close-result, #close-refund {
+      float: right;
+    }
+*/
+    button {
+      margin: 6px;
+    }
+  </style>
+
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+
+<script type="text/javascript" src="//src.rdbhost.com/2.1/vendor/labjs/LAB.js"></script>
+<script>
+  var HOST = window.location.href.indexOf('devd') > -1 ? 'devsrc.rdbhost.com' : 'src.rdbhost.com';
+  var $L = $LAB
+      .script('//'+HOST+'/latest/lib/js/util-bundle;rdbhost.js').wait(
+          function () {
+            if (!Rdbhost.featuredetects.hasPromises())
+              $L = $L.script('//'+HOST+'/latest/vendor/es6-promises/dist/es6-promise.js');
+            if (!Rdbhost.featuredetects.hasFetch())
+              $L = $L.script('//'+HOST+'/latest/vendor/fetch/fetch.js').wait();
+          }
+      );
+  $L = $L.script('//'+HOST+'/latest/lib/js/rdb2-livereload.js')
+      .script('//'+HOST+'/latest/lib/js/rdb2-emailing.js');
+</script>
+
+<div class="main">
+
+  <h2>Email Demonstration.</h2>
+
+  <div class="advice">
+    <p>The RdbHost emailing module is flexible about constraining the source, target or content of an email.</p>
+    <p>This demo shows two common use-cases:
+      <ol>
+        <li>Send user chosen content to pre-determined recipient.</li>
+        <li>Send fixed (safe) content to user provided addresses.</li>
+      </ol>
+      Neither allows for spamming or sending harsh content to arbitrary strangers.
+    </p>
+  </div>
+
+  <section>
+    <h3>SQL Joke</h3>
+
+    <table id="jokes" rules="all" frame="box" hidden>
+      <thead>
+      <tr>
+        <th>idx</th>
+        <th>joke</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr>
+        <td>{{idx}}</td>
+        <td>{{joke}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <p></p>
+  <section>
+    <button id="next-joke">Different Random Joke</button>
+  </section>
+
+    <p> &nbsp; </p>
+
+  <div class="form">
+    <span id="err0"></span>
+    <input id="email" name="email" type="email" placeholder="my email address"><br/>
+    <button id="send-self">Send me this Joke!</button>
+  </div>
+
+  <p> &nbsp; </p>
+  <h3>The jokes I have found are lame, no?   If you know a good one, send it to me.</h3>
+
+  <div class="form">
+    <textarea id="new-joke" name="new-joke" placeholder="Two DBS walk..."></textarea><br/>
+    <button id="send-joke">Send RdbHost a Joke!</button>
+  </div>
+
+</div>
+<div style="display:none" id="result-popup" frame="box">
+  <button id="close-result">[x]</button><br/>
+  <h4>Result</h4>
+
+  <span class="message"></span>
+</div>
+
+
+<script>
+  $L = $L.wait(function () {
+
+    var DB_HOST = window.location.href.indexOf('devd') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
+
+    // setup connection to database
+    Rdbhost.connect(DB_HOST, 14);
+    var preauthRef = Rdbhost.preauth();
+    Rdbhost.activate_reloader(preauthRef.clone());
+
+    Rdbhost.Email.email_config(DB_HOST, 'rdbhost@rdbhost.com', 'postmark', false);
+
+    $(document).on('click', '#send-self', function(evt) {
+      /* on Send self click,
+        get email address and send email to
+      */
+      var emailAddress = $('#email').val(),
+          jokeEntry = $('#jokes').find('tr:nth-child(2)').first().find('td:nth-child(1)'),
+          jokeId = jokeEntry.text(),
+          $err = $('#err0');
+      $err.empty();
+
+      if ( !emailAddress ) {
+          $err.append('Provide Email Address');
+          return;
+      }
+
+      var f = Rdbhost.Email.fixed_wrapper,
+          c = Rdbhost.Email.column_wrapper;
+
+      var preauth = Rdbhost.Email.preauth();
+      var p = preauth.query('SELECT joke FROM sql_jokes WHERE idx = %s').params([jokeId])
+          .email(f('David'), f('dkeeney@here.now'), f('You'), emailAddress, f('Demo'), c('joke'));
+
+    });
+
+    $('#next-joke').click(function() {
+        /* update page with joke from random source    */
+        load_random_joke();
+    });
+    $('#close-result').click(function(evt) {
+      $('#result-popup').hide();
+    });
+
+
+    function prep_table(id) {
+      /* extract reusable items from html table, for use in rendering tables with data.   */
+      var $tbl = $('#' + id),
+          $th = $tbl.find('tr').first().remove(),
+          $tr = $tbl.find('tr').first();
+      return {
+        '$table': $tbl,
+        '$th': $th,
+        'tpl': $tr[0].outerHTML
+      }
+    }
+
+    var jokeTableData = prep_table('jokes');
+
+    function load_random_joke() {
+      /*  pull order data from server, to pupulate two order tables.      */
+      var q =  'SELECT j.idx, j.joke \n' +
+               '  FROM sql_jokes j ORDER BY random() LIMIT 1;';
+
+      var preauth = preauthRef.clone(),
+          pr = preauth.query(q).get_data();
+
+      pr.then(function (d) {
+
+        var jokes = d.result_sets[0],
+            row, j, p;
+
+        // populate jokes-orders html table with server data
+        jokeTableData.$table.empty();
+        jokeTableData.$table.append(jokeTableData.$th);
+
+        for (var _j in jokes.records.rows) {
+          if (!jokes.records.rows.hasOwnProperty(_j))
+            continue;
+          j = jokes.records.rows[_j];
+          row = jokeTableData.tpl.replace('{{idx}}', j.idx).replace('{{joke}}', j.joke);
+          jokeTableData.$table.append(row);
+        }
+        jokeTableData.$table.show();
+
+      })
+      .catch(function (e) {
+        debugger;
+      })
+
+    }
+
+    // initial load of table data
+    load_random_joke();
+  });
+</script>
+</body>
+</html>
