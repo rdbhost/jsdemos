@@ -186,7 +186,7 @@
 
       var preauth = Rdbhost.Email.preauth();
       var p = preauth.query('SELECT joke, idx FROM sql_jokes WHERE idx = %s').params([jokeId])
-          .email(f('David'), f('dkeeney@here.now'), f('You'), emailAddress, f('Demo'), c('joke'));
+          .email(f('David'), f('rdbhost@rdbhost.com'), f('Demo User'), emailAddress, f('Demo'), c('joke'));
 
       p.then(function(d) {
             debugger;
