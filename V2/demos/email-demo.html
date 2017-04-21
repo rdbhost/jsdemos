@@ -45,8 +45,7 @@
       background-color: #999999 ;
     }
 
-/*
-    #pay-popup, #refund-popup, #result-popup {
+    #result-popup {
 
       align: auto;
       height: 200px;
@@ -61,7 +60,6 @@
     #close-pay, #close-result, #close-refund {
       float: right;
     }
-*/
     button {
       margin: 6px;
     }
@@ -155,9 +153,13 @@
 
 
 <script>
+
   $L = $L.wait(function () {
 
+    var $popup = $('#result-popup');
     var DB_HOST = window.location.href.indexOf('devd') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
+    var f = Rdbhost.Email.fixed_wrapper,
+        c = Rdbhost.Email.column_wrapper;
 
     // setup connection to database
     Rdbhost.connect(DB_HOST, 14);
@@ -167,32 +169,76 @@
     Rdbhost.Email.email_config(DB_HOST, 'rdbhost@rdbhost.com', 'postmark', false);
 
     $(document).on('click', '#send-self', function(evt) {
-      /* on Send self click,
-        get email address and send email to
-      */
-      var emailAddress = $('#email').val(),
-          jokeEntry = $('#jokes').find('tr:nth-child(2)').first().find('td:nth-child(1)'),
-          jokeId = jokeEntry.text(),
+        /* on Send self click,
+          get email address and send email to
+        */
+        var emailAddress = $('#email').val(),
+            jokeEntry = $('#jokes').find('tr:nth-child(2)').first().find('td:nth-child(1)'),
+            jokeId = jokeEntry.text(),
+            $err = $('#err0');
+        $err.empty();
+
+        if ( !emailAddress ) {
+            $err.append('Provide Email Address');
+            return;
+        }
+
+        var preauth = Rdbhost.Email.preauth();
+        var p = preauth.query('SELECT replace(e.body, \'{joke}\', j.joke) AS msg, idx FROM \n' +
+                              'email.sql_jokes j, email.msg_bodies e WHERE j.idx = %s AND e.name = \'out\'').params([jokeId])
+            .email(f('David'), f('rdbhost@rdbhost.com'), f('Demo User'), emailAddress, f('Demo'), c('msg'));
+
+        p.then(function(d) {
+              var suc = d.result_sets[0].records.rows;
+              if (suc && suc[0].result.toLowerCase() === 'success') {
+
+                $popup.find('.message').html('Success');
+                $popup.show();
+              }
+              else {
+                $popup.find('.message').html('no message sent');
+                $popup.show();
+              }
+            })
+            .catch(function(e) {
+              $popup.find('.message').html(e.message);
+              $popup.show();
+            })
+    });
+
+    $(document).on('click', '#send-joke', function(evt) {
+      /* on Send joke click,
+       get joke and send email to me
+       */
+      var newJoke = $('#new-joke').val(),
           $err = $('#err0');
       $err.empty();
 
-      if ( !emailAddress ) {
-          $err.append('Provide Email Address');
-          return;
+      if ( !newJoke ) {
+        $err.append('Tell me the joke!');
+        return;
       }
 
-      var f = Rdbhost.Email.fixed_wrapper,
-          c = Rdbhost.Email.column_wrapper;
-
       var preauth = Rdbhost.Email.preauth();
-      var p = preauth.query('SELECT joke, idx FROM sql_jokes WHERE idx = %s').params([jokeId])
-          .email(f('David'), f('rdbhost@rdbhost.com'), f('Demo User'), emailAddress, f('Demo'), c('joke'));
+      var p = preauth.query('SELECT replace(e.body, \'{joke}\', %s) AS msg, 1 AS idx FROM \n' +
+                            'email.msg_bodies e WHERE e.name = \'in\'').params([newJoke])
+          .email(f('Demo User'), f('rdbhost@rdbhost.com'), f('Demo User'), f('dkeeney@rdbhost.com'), f('RdbHost'), c('msg'));
 
       p.then(function(d) {
-            debugger;
+            var suc = d.result_sets[0].records.rows;
+            if (suc && suc[0].result.toLowerCase() === 'success') {
+
+              $popup.find('.message').html('Success');
+              $popup.show();
+            }
+            else {
+              $popup.find('.message').html('no message sent');
+              $popup.show();
+            }
           })
           .catch(function(e) {
-            debugger;
+            $popup.find('.message').html(e.message);
+            $popup.show();
           })
 
     });
@@ -202,7 +248,8 @@
         load_random_joke();
     });
     $('#close-result').click(function(evt) {
-      $('#result-popup').hide();
+      $popup.find('.message').text('');
+      $popup.hide();
     });
 
 
@@ -223,7 +270,7 @@
     function load_random_joke() {
       /*  pull order data from server, to pupulate two order tables.      */
       var q =  'SELECT j.idx, j.joke \n' +
-               '  FROM sql_jokes j ORDER BY random() LIMIT 1;';
+               '  FROM email.sql_jokes j ORDER BY random() LIMIT 1;';
 
       var preauth = preauthRef.clone(),
           pr = preauth.query(q).get_data();
@@ -258,4 +305,43 @@
   });
 </script>
 </body>
+<!--
+
+GRANT USAGE ON SCHEMA email TO p0000000014;
+GRANT SELECT ON TABLE auth.apikeys TO p0000000014;
+
+--
+-- Name: msg_bodies; Type: TABLE; Schema: email; Owner: s0000000014; Tablespace:
+--
+
+CREATE TABLE email.msg_bodies (
+    name character varying NOT NULL,
+    body text NOT NULL
+);
+
+
+ALTER TABLE email.msg_bodies OWNER TO s0000000014;
+
+--
+-- Name: sql_jokes; Type: TABLE; Schema: email; Owner: s0000000014; Tablespace:
+--
+
+CREATE TABLE email.sql_jokes (
+    idx integer NOT NULL,
+    joke text NOT NULL
+);
+
+
+
+
+ALTER TABLE email.msg_bodies OWNER TO s0000000014;
+GRANT ALL ON TABLE email.msg_bodies TO s0000000014;
+GRANT SELECT ON TABLE email.msg_bodies TO p0000000014;
+
+ALTER TABLE email.sql_jokes OWNER TO s0000000014;
+GRANT ALL ON TABLE email.sql_jokes TO s0000000014;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE email.sql_jokes TO p0000000014;
+
+
+-->
 </html>

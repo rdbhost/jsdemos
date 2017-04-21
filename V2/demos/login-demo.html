@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+
+  <style>
+    div.main {
+      margin: auto;
+      width: 700px;
+    }
+
+    div.advice {
+      background-color: #9FAFD1;
+      width: 70%;
+      padding: 8px 2em 8px 2em;
+      margin-bottom: 3em;
+    }
+    div.login {
+      background-color: #9FAFD1;
+      width: 70%;
+      padding: 8px 2em 8px 2em;
+      margin-bottom: 2em;
+    }
+    div.history {
+      background-color: #9FAFD1;
+      width: 70%;
+      padding: 8px 2em 8px 2em;
+      margin-bottom: 2em;
+    }
+
+    h3 {
+      margin-top: 2em;
+    }
+    .ralign {
+      text-align: right;
+    }
+
+    table {
+      background-color: lightblue;
+    }
+    table td {
+      padding: 12px;
+    }
+    table th {
+      background-color: #999999 ;
+    }
+
+    #result-popup {
+      align: auto;
+      height: 200px;
+      width: 200px;
+      position: fixed;
+      top: 200px;
+      left: 350px;
+      background: lightsalmon;
+      border: double black;
+      padding: 20px;
+    }
+    #close-result {
+      float: right;
+    }
+    button {
+      margin: 6px;
+    }
+  </style>
+
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
+
+<script type="text/javascript" src="//devsrc.rdbhost.com/latest/vendor/labjs/LAB.js"></script>
+<script>
+  var HOST = window.location.href.indexOf('devd') > -1 ? 'devsrc.rdbhost.com' : 'src.rdbhost.com';
+  var $L = $LAB
+      .script('//'+HOST+'/latest/lib/js/util-bundle;rdbhost.js').wait(
+          function () {
+            if (!Rdbhost.featuredetects.hasPromises())
+              $L = $L.script('//'+HOST+'/latest/vendor/es6-promises/dist/es6-promise.js');
+            if (!Rdbhost.featuredetects.hasFetch())
+              $L = $L.script('//'+HOST+'/latest/vendor/fetch/fetch.js').wait();
+          }
+      );
+  $L = $L.script('//'+HOST+'/latest/lib/js/rdb2-livereload.js')
+      .script('//'+HOST+'/latest/lib/js/rdb2-emailing.js')
+      .script('//'+HOST+'/latest/lib/js/rdb2-authenticate.js');
+</script>
+
+<div class="main">
+
+  <h2>Login and Registration</h2>
+
+  <div class="advice">
+    <h4></h4>
+    <p>The Login History displayed at the bottom of the page is stored in your browser session.</p>
+    <p>Your logins here are not shown to any other user..</p>
+  </div>
+
+  <section>
+    <div class="login">
+      <form>
+        Enter email for account registration.
+        <p>A welcome email will be emailed to given address, containing your login password.</p>
+        <div><input name="email" id="email0" /></div>
+        <button id="register" type="submit">Register new Account</button>
+      </form>
+    </div>
+  </section>
+
+
+  <section>
+    <div class="login">
+      <form>
+        Enter email and password to login.
+        <div><input name="email" id="email1" /></div>
+        <div><input name="password" id="password" /></div>
+        <button id="login" type="submit">Login with Password</button>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <div class="login">
+      <button id="twitter">Twitter Login</button>
+    </div>
+  </section>
+
+  <section>
+    <h3>Login History</h3>
+
+    <div class="history">
+      <table id="history" rules="all" frame="box" hidden>
+        <thead>
+        <tr>
+          <th>when</th>
+          <th>what</th>
+          <th>who</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+          <td>{{when}}</td>
+          <td>{{what}}</td>
+          <td>{{who}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <p></p>
+</div>
+<div style="display:none" id="result-popup" frame="box">
+  <button id="close-result">[x]</button><br/>
+  <h4>Result</h4>
+
+  <span class="message"></span>
+</div>
+
+
+<script>
+  $L = $L.wait(function () {
+
+    var sessStorLabel = 'rdbhost--login--demo';
+    try {
+
+      function get_history() {
+        var h = sessionStorage.getItem(sessStorLabel);
+        if ( !h )
+          return [];
+        return JSON.parse(h);
+      }
+      function save_history(h) {
+        var s = JSON.stringify(h);
+        sessionStorage.setItem(sessStorLabel, s);
+      }
+
+      var DB_HOST = window.location.href.indexOf('devd') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
+
+      // setup connection to database
+      Rdbhost.connect(DB_HOST, 14);
+      var preauthRef = Rdbhost.preauth();
+      Rdbhost.activate_reloader(preauthRef.clone());
+
+      $('#twitter').click(function(e) {
+        Rdbhost.Authenticate.fedauth_login('Twitter', window.location.href);
+        // this function never returns.
+      });
+
+
+      var liProm = Rdbhost.Authenticate.confirm_fedauth_login()
+          .then(function(userData) {
+
+        if (!userData || !userData.status)
+          return;
+
+        if (userData.status === 'loggedin') {
+
+          var h = get_history();
+          userData.when = new Date();
+          h.push(userData);
+          save_history(h);
+
+          load_history();
+        }
+        else {
+
+          $('#result-popup .message').text('Error '+userData.status);
+          $('#result-popup').show();
+        }
+      });
+
+      $('#close-result').click(function(evt) {
+        // close popup
+        $('#result-popup').hide();
+      });
+
+      Rdbhost.Email.email_config('me', 'me@rdbhost.com', 'postmark');
+      $('#register').click(function(evt) {
+
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+        var email = $('#email0').val();
+
+        var p = Rdbhost.Authenticate.register_login_with_email(email);
+        return p.then(function(d) {
+
+              var result = d.result_sets[0].records.rows[0].result;
+              if ( result === 'Success') {
+
+                $('#result-popup .message').text('Email was Sent');
+                $('#result-popup').show();
+              }
+              else
+                throw new Error(result);
+            })
+            .catch(function(e) {
+
+              if (e.message.substring(0,5) === '23505') {
+
+                $('#result-popup .message').text('Error: that email already in db');
+                $('#result-popup').show();
+              }
+              else {
+
+                $('#result-popup .message').text('Error: '+e.message);
+                $('#result-popup').show();
+              }
+            })
+
+      });
+
+      $('#login').click(function(evt) {
+
+        evt.stopImmediatePropagation();
+        evt.preventDefault();
+        var email = $('#email1').val(),
+            passwd = $('#password').val();
+
+        var p = Rdbhost.Authenticate.password_login(email, passwd);
+        return p.then(function(uD) {
+
+              if (uD) {
+
+                var userData = {
+                  'status': 'loggedin',
+                  'identifier': uD.identifier,
+                  'when': new Date(),
+                  'issuer': 'PasswordLogin'
+                };
+                var h = get_history();
+                h.push(userData);
+                save_history(h);
+
+                load_history();
+              }
+              else {
+
+                $('#result-popup .message').text('Error: email/password not found. ');
+                $('#result-popup').show();
+              }
+            })
+            .catch(function(e) {
+
+              debugger;
+
+              $('#result-popup .message').text('Error: '+e.message);
+              $('#result-popup').show();
+            })
+
+      });
+
+      function prep_table(id) {
+        /* extract reusable items from html table, for use in rendering tables with data.
+         */
+        var $tbl = $('#' + id),
+            $th = $tbl.find('tr').first().remove(),
+            $tr = $tbl.find('tr').first().remove();
+        return {
+          '$table': $tbl,
+          '$th': $th,
+          'tpl': $tr[0].outerHTML
+        }
+      }
+
+      var historyTableParts = prep_table('history');
+
+      function load_history() {
+        var hist = get_history(),
+            $tbl = historyTableParts.$table;
+
+        $tbl.empty();
+        $tbl.append(historyTableParts.$th.clone());
+        for (var _h in hist) {
+          var h = hist[_h];
+          var t = historyTableParts.tpl.replace('{{when}}', h.when.substr(11,9)).replace('{{what}}', h.issuer).replace('{{who}}', h.identifier);
+          $tbl.append(t);
+        }
+        $tbl.show();
+      }
+
+      // initial load of table data
+      load_history();
+    }
+    catch (e) {
+      debugger;
+    }
+
+  });
+</script>
+</body>
+</html>
