@@ -70,21 +70,21 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 
-<script type="text/javascript" src="//devsrc.rdbhost.com/latest/vendor/labjs/LAB.js"></script>
+<script type="text/javascript" src="//devsrc.rdbhost.com/2.2/vendor/labjs/LAB.js"></script>
 <script>
   var HOST = window.location.href.indexOf('devd') > -1 ? 'devsrc.rdbhost.com' : 'src.rdbhost.com';
   var $L = $LAB
-      .script('//'+HOST+'/latest/lib/js/util-bundle;rdbhost.js').wait(
+      .script('//'+HOST+'/2.2/lib/js/util-bundle;rdbhost.js').wait(
           function () {
             if (!Rdbhost.featuredetects.hasPromises())
-              $L = $L.script('//'+HOST+'/latest/vendor/es6-promises/dist/es6-promise.js');
+              $L = $L.script('//'+HOST+'/2.2/vendor/es6-promises/dist/es6-promise.js');
             if (!Rdbhost.featuredetects.hasFetch())
-              $L = $L.script('//'+HOST+'/latest/vendor/fetch/fetch.js').wait();
+              $L = $L.script('//'+HOST+'/2.2/vendor/fetch/fetch.js').wait();
           }
       );
-  $L = $L.script('//'+HOST+'/latest/lib/js/rdb2-livereload.js')
-      .script('//'+HOST+'/latest/lib/js/rdb2-emailing.js')
-      .script('//'+HOST+'/latest/lib/js/rdb2-authenticate.js');
+  $L = $L.script('//'+HOST+'/2.2/lib/js/rdb2-livereload.js')
+      .script('//'+HOST+'/2.2/lib/js/rdb2-emailing.js')
+      .script('//'+HOST+'/2.2/lib/js/rdb2-authenticate.js');
 </script>
 
 <div class="main">

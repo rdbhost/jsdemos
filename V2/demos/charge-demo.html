@@ -57,20 +57,20 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.js"></script>
 
-<script type="text/javascript" src="//src.rdbhost.com/2.1/vendor/labjs/LAB.js"></script>
+<script type="text/javascript" src="//src.rdbhost.com/2.2/vendor/labjs/LAB.js"></script>
 <script>
   var HOST = window.location.href.indexOf('devd') > -1 ? 'devsrc.rdbhost.com' : 'src.rdbhost.com';
   var $L = $LAB
-      .script('//'+HOST+'/latest/lib/js/rdb2-bundle.js').wait(
+      .script('//'+HOST+'/2.2/lib/js/util-bundle;rdbhost.js').wait(
           function () {
             if (!Rdbhost.featuredetects.hasPromises())
-              $L = $L.script('//'+HOST+'/latest/vendor/es6-promises/dist/es6-promise.js');
+              $L = $L.script('//'+HOST+'/2.2/vendor/es6-promises/dist/es6-promise.js');
             if (!Rdbhost.featuredetects.hasFetch())
-              $L = $L.script('//'+HOST+'/latest/vendor/fetch/fetch.js').wait();
+              $L = $L.script('//'+HOST+'/2.2/vendor/fetch/fetch.js').wait();
           }
       );
-  $L = $L.script('//'+HOST+'/latest/lib/js/rdb2-livereload.js')
-      .script('//'+HOST+'/latest/lib/js/rdb2-charge.js');
+  $L = $L.script('//'+HOST+'/2.2/lib/js/rdb2-livereload.js')
+      .script('//'+HOST+'/2.2/lib/js/rdb2-charge.js');
 </script>
 
 <div class="main">
@@ -258,7 +258,7 @@
 
       pr.then(function (d) {
             $('#pay-popup').hide();
-            var res = d.result_sets[0].rows[0].result;
+            var res = d.result_sets[0].records.rows[0].result;
             $('#result-popup .message').text(res);
             $('#result-popup').show();
             load_orders();
@@ -307,7 +307,7 @@
 
       pr.then(function (d) {
             $('#refund-popup').hide();
-            var res = d.result_sets[0].rows;
+            var res = d.result_sets[0].records.rows;
             if ( !res )
               $('#result-popup .message').text('Charge not found');
             else
@@ -323,7 +323,8 @@
     $('#new-order').click(function() {
       /* add new unpaid order to orders db, from random source
       */
-      var q = 'INSERT INTO orders (items, price) SELECT "desc", price FROM order_elements ORDER BY random() LIMIT 1;';
+      var q = 'INSERT INTO orders (items, price) SELECT "desc", price \n' +
+              '    FROM order_elements ORDER BY random() LIMIT 1;';
       var preauth = preauthRef.clone(),
           pr = preauth.query(q).get_data();
       pr.then(function(d) {

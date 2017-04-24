@@ -16,6 +16,9 @@
   <li><a href="{link}">{name}</a></li>
 </ul>
 
-<script>$L.wait(function() { list_dir(14, document, document.location.pathname) });</script>
+<script>
+  var host = window.location.href.indexOf('dev') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
+  $L.wait(function() { list_dir(host, 14, document, document.location.pathname) });
+</script>
 </body>
 </html>
