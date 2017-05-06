@@ -5,15 +5,64 @@
   <title>Charge</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: sans-serif;
+      color: #333;
+      margin: 0; 
+    }
+
     div.main {
       margin: auto;
       width: 700px;
     }
 
+    .title {
+      margin: 30px 0;
+    }
+
     div.advice {
-      background-color: #9FAFD1;
-      width: 70%;
-      padding: 8px 2em 8px 2em;
+      background-color: #f4f4f4;
+      border: 1px solid #333;
+      border-radius: 8px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .advice h4 {
+      margin-bottom: 20px;
+    }
+
+    .advice p {
+      margin-bottom: 20px;
+    }
+
+    .advice h5 {
+      margin-bottom: 10px;
+    }
+
+    .advice ul {
+      margin-bottom: 20px;
+    }
+
+    .advice ul:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .advice li {
+
+    }
+
+    button {
+      display: inline-block;
+      padding: 5px 20px;
+      background: #333;
+      color: #FFF;
+      -webkit-appearance: none;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 10px 0;
     }
 
     h3 {
@@ -44,11 +93,9 @@
       border: double black;
       padding: 20px;
     }
+    
     #close-pay, #close-result, #close-refund {
       float: right;
-    }
-    button {
-      margin: 6px;
     }
   </style>
 
@@ -75,18 +122,22 @@
 
 <div class="main">
 
-  <h2>Simplified Order Form, for Credit-Card Operations.</h2>
+  <h2 class="title">Simplified Order Form, for Credit-Card Operations.</h2>
 
   <div class="advice">
     <h4>Test Card Numbers</h4>
+    
     <p>The Stripe.Com account used here is a test account, so only test card numbers can be used.
       Use one of these, or see a more complete list at <a href="https://stripe.com/docs/testing#cards">Stripe</a>.
       Use a future expiration date for success, past for failure.</p>
+    
     <h5>Good Numbers</h5>
+    
     <ul>
       <li>4242 4242 4242 4242</li>
       <li>5555 5555 5555 4444</li>
     </ul>
+    
     <h5>Bad Numbers</h5>
     <ul>
       <li>4000 0000 0000 0101</li>
