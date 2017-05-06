@@ -10,6 +10,7 @@
       font-family: sans-serif;
       color: #333;
       margin: 0; 
+      -webkit-font-smoothing: antialiased;
     }
 
     div.main {
@@ -41,7 +42,7 @@
       margin-bottom: 10px;
     }
 
-    .advice ul {
+    .advice ul, .advice ol {
       margin-bottom: 20px;
     }
 
@@ -52,6 +53,37 @@
     .advice li {
 
     }
+
+    div.form {
+      background-color: #f4f4f4;
+      border: 1px solid #333;
+      border-radius: 8px;
+      width: 100%;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    div.form textarea {
+      display: block;
+      width: 300px;
+      height: 8em;
+      padding: 5px;
+      -webkit-appearance: none;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    div.form input {
+      display: block;
+      width: 300px;
+      padding: 5px;
+      -webkit-appearance: none;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
 
     button {
       display: inline-block;
@@ -66,37 +98,51 @@
     }
 
     h3 {
-      margin-top: 2em;
+      margin: 20px 0;
     }
+
     .ralign {
       text-align: right;
     }
 
     table {
-      background-color: lightblue;
-    }
-    table td {
-      padding: 12px;
-    }
-    table th {
-      background-color: #999999 ;
+      background-color: #f4f4f4;
+      width: 100%;
+      border-radius: 8px;
     }
 
-    #pay-popup, #refund-popup, #result-popup {
-      align: auto;
+    table td {
+      padding: 10px;
+    }
+    table th {
+      background-color: #333 ;
+      color: #fff;
+      padding: 5px 10px;
+    }
+
+    #result-popup {
       height: 200px;
       width: 200px;
       position: fixed;
-      top: 200px;
-      left: 350px;
-      background: lightsalmon;
-      border: double black;
+      top: calc(50% - 100px);
+      left: calc(50% - 100px);
+      background: #f4f4f4;
+      border: 1px solid #333;
       padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
     }
     
     #close-pay, #close-result, #close-refund {
       float: right;
+      height: 25px;
+      width: 25px;
+      text-align: center;
+      padding: 0;
+      line-height: 25px;
+      border-radius: 50%;
     }
+    
   </style>
 
 </head>
@@ -208,7 +254,7 @@
   <p> &nbsp; </p>
 </div>
 <div style="display:none" id="pay-popup" frame="box">
-  <button id="close-pay">[x]</button><br/>
+  <button id="close-pay">x</button><br/>
   <h4>Pay for Order</h4>
 
   Order: <span class="order-num"></span><br/>
@@ -226,7 +272,7 @@
   <button id="pay-order">Pay for Order</button>
 </div>
 <div style="display:none" id="refund-popup" frame="box">
-  <button id="close-refund">[x]</button><br/>
+  <button id="close-refund">x</button><br/>
   <h4>Refund Charge</h4>
 
   Amount: $<span class="price"></span>
@@ -238,7 +284,7 @@
   <button id="refund-charge">Refund the Charge</button>
 </div>
 <div style="display:none" id="result-popup" frame="box">
-  <button id="close-result">[x]</button><br/>
+  <button id="close-result">x</button><br/>
   <h4>Result</h4>
 
   <span class="message"></span>
