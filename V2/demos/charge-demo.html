@@ -98,7 +98,7 @@
     }
 
     h3 {
-      margin: 20px 0;
+      margin: 40px 0 20px 0;
     }
 
     .ralign {
@@ -110,15 +110,14 @@
       width: 100%;
       border-radius: 8px;
       border-collapse: collapse;
+
+      border: 1px solid;
     }
 
-    table, td, th {
+    td, th {
       border: none;
-    }
-
-    table td {
       padding: 10px;
-      border-bottom: 1px solid #f4f4f4;
+      /* border-bottom: 1px solid #f4f4f4; */
     }
 
     table td:last-child {
@@ -204,7 +203,7 @@
   <section>
     <h3>Unpaid orders</h3>
 
-    <table id="unpaid" rules="all" frame="box" hidden>
+    <table id="unpaid" frame="box">
       <thead>
       <tr>
         <th>id</th>
@@ -236,7 +235,7 @@
   <section>
     <h3>Paid Orders</h3>
 
-    <table id="paid" rules="all" frame="box" hidden>
+    <table id="paid" frame="box">
       <thead>
       <tr>
         <th>id</th>
