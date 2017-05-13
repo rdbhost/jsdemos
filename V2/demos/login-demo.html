@@ -22,12 +22,18 @@
       margin: 30px 0;
     }
 
-    div.advice {
+    div.advice, section.bordered {
       background-color: #fff;
       border: 1px solid #333;
       border-radius: 8px;
       width: 100%;
       padding: 20px;
+    }
+
+    section.bordered {
+      border: none;
+      border-bottom: 1px solid #333;
+      border-radius: 0;
     }
 
     .advice h4 {
@@ -198,7 +204,7 @@
     <p>Your logins here are not shown to any other user..</p>
   </div>
 
-  <section>
+  <section class="bordered">
     <div class="login">
       <form>
         <p class="para">Enter email for account registration.</p>
@@ -212,7 +218,7 @@
   </section>
 
 
-  <section>
+  <section class="bordered">
     <div class="login">
       <form>
         <p class="para">Enter email and password to login.</p>
@@ -227,8 +233,9 @@
     </div>
   </section>
 
-  <section>
+  <section class="bordered">
     <div class="login">
+      <p class="para">Use twitter to login.</p>
       <button id="twitter">Twitter Login</button>
     </div>
   </section>
