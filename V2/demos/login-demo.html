@@ -5,64 +5,166 @@
   <title>Login</title>
 
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: sans-serif;
+      color: #333;
+      margin: 0; 
+      -webkit-font-smoothing: antialiased;
+    }
+
     div.main {
       margin: auto;
       width: 700px;
     }
 
+    .title {
+      margin: 30px 0;
+    }
+
     div.advice {
-      background-color: #9FAFD1;
-      width: 70%;
-      padding: 8px 2em 8px 2em;
-      margin-bottom: 3em;
+      background-color: #fff;
+      border: 1px solid #333;
+      border-radius: 8px;
+      width: 100%;
+      padding: 20px;
     }
-    div.login {
-      background-color: #9FAFD1;
-      width: 70%;
-      padding: 8px 2em 8px 2em;
-      margin-bottom: 2em;
+
+    .advice h4 {
+      margin-bottom: 20px;
     }
-    div.history {
-      background-color: #9FAFD1;
-      width: 70%;
-      padding: 8px 2em 8px 2em;
-      margin-bottom: 2em;
+
+    .advice p {
+      margin-bottom: 20px;
+    }
+
+    .advice h5 {
+      margin-bottom: 10px;
+    }
+
+    .advice ul, .advice ol {
+      margin-bottom: 20px;
+    }
+
+    .advice ul:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .advice li {
+
+    }
+
+    div.form {
+      background-color: #fff;
+      border: 1px solid #333;
+      border-radius: 8px;
+      width: 100%;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    div.form textarea {
+      display: block;
+      width: 300px;
+      height: 8em;
+      padding: 5px;
+      -webkit-appearance: none;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    div.form input, .input-group input {
+      display: block;
+      width: 300px;
+      padding: 5px;
+      -webkit-appearance: none;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+
+    button {
+      display: inline-block;
+      padding: 5px 20px;
+      background: #4990E2;
+      color: #FFF;
+      -webkit-appearance: none;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin: 10px 0;
     }
 
     h3 {
-      margin-top: 2em;
+      margin: 40px 0 20px 0;
     }
+
     .ralign {
       text-align: right;
     }
 
     table {
-      background-color: lightblue;
+      background-color: #fff;
+      width: 100%;
+      border-radius: 8px;
+      border-collapse: collapse;
+
+      border: 1px solid;
     }
-    table td {
-      padding: 12px;
+
+    td, th {
+      border: none;
+      padding: 10px;
+      /* border-bottom: 1px solid #f4f4f4; */
     }
+
+    table td:last-child {
+      text-align: right;
+    }
+
     table th {
-      background-color: #999999 ;
+      background-color: #4990E2 ;
+      color: #fff;
+      padding: 5px 10px;
     }
 
     #result-popup {
-      align: auto;
       height: 200px;
       width: 200px;
       position: fixed;
-      top: 200px;
-      left: 350px;
-      background: lightsalmon;
-      border: double black;
+      top: calc(50% - 100px);
+      left: calc(50% - 100px);
+      background: #fff;
+      border: 1px solid #333;
       padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
     }
-    #close-result {
+    
+    #close-pay, #close-result, #close-refund {
       float: right;
+      height: 25px;
+      width: 25px;
+      text-align: center;
+      padding: 0;
+      line-height: 25px;
+      border-radius: 50%;
     }
-    button {
-      margin: 6px;
+    
+    section {
+      margin: 20px 0;
     }
+
+    .para {
+      margin-bottom: 20px;
+    }
+
   </style>
 
 </head>
@@ -89,10 +191,9 @@
 
 <div class="main">
 
-  <h2>Login and Registration</h2>
+  <h2 class="title">Login and Registration</h2>
 
   <div class="advice">
-    <h4></h4>
     <p>The Login History displayed at the bottom of the page is stored in your browser session.</p>
     <p>Your logins here are not shown to any other user..</p>
   </div>
@@ -100,9 +201,11 @@
   <section>
     <div class="login">
       <form>
-        Enter email for account registration.
-        <p>A welcome email will be emailed to given address, containing your login password.</p>
-        <div><input name="email" id="email0" /></div>
+        <p class="para">Enter email for account registration.</p>
+        <p class="para">A welcome email will be emailed to given address, containing your login password.</p>
+        <div class="input-group">
+          <input name="email" id="email0" />
+        </div>
         <button id="register" type="submit">Register new Account</button>
       </form>
     </div>
@@ -112,9 +215,13 @@
   <section>
     <div class="login">
       <form>
-        Enter email and password to login.
-        <div><input name="email" id="email1" /></div>
-        <div><input name="password" id="password" /></div>
+        <p class="para">Enter email and password to login.</p>
+        <div class="input-group">
+          <input name="email" id="email1" />
+        </div>
+        <div class="input-group">
+          <input name="password" id="password" />
+        </div>
         <button id="login" type="submit">Login with Password</button>
       </form>
     </div>
@@ -154,7 +261,7 @@
   <p></p>
 </div>
 <div style="display:none" id="result-popup" frame="box">
-  <button id="close-result">[x]</button><br/>
+  <button id="close-result">x</button><br/>
   <h4>Result</h4>
 
   <span class="message"></span>
