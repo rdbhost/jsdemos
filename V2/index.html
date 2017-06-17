@@ -7,9 +7,12 @@
 </head>
 <body>
 
-<!-- script id="RDBHOST-SQL-INLINE-ID" type="text/sql" data-sql="" data-role=p0000000012> </script -->
+<script id="RDBHOST-SQL-INLINE-ID" type="text/sql"
+        data-sql="SELECT name, isdir FROM subdir(%[PATH_INFO]s);"
+        data-role=p0000000014> </script>
 <script type="text/javascript" src="https://dev.rdbhost.com/vendor/labjs/LAB.js"></script>
-<script src="https://dev.rdbhost.com/vendor/rdbhost/latest/util/subdir.js"></script>
+<script src="https://www.rdbhost.com/vendor/rdbhost/2.2/lib/js/util-bundle;rdbhost.js"></script >
+<!-- script src="https://dev.rdbhost.com/vendor/rdbhost/latest/util/subdir.js"></script -->
 
 
 <ul>
@@ -17,8 +20,42 @@
 </ul>
 
 <script>
-  var host = window.location.href.indexOf('dev') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
-  $L.wait(function() { list_dir(host, 14, document, document.location.pathname) });
+  Rdbhost.connect('dev.rdbhost.com', 14);
+
+
+  function render_list(rows, container) {
+
+    var templateContainer, templateRow, i0, prefix, path;
+
+    prefix = path = '';
+
+    templateContainer = container.getElementsByTagName('ul')[0];
+    templateRow = templateContainer.getElementsByTagName('li')[0];
+    templateContainer.removeChild(templateRow);
+
+    _.each(rows, function(r) {
+
+      if (r.name === '')
+        return;
+      if (r.isdir)
+        r.name = r.name + '/';
+
+      i0 = templateRow.cloneNode(true);
+
+      i0.innerHTML = templateRow.innerHTML.replace('{name}', r.name).replace('{link}', prefix + path + r.name);
+      templateContainer.appendChild(i0);
+    });
+  }
+
+  var p = Rdbhost.inline_sql();
+  p.then(function(d) {
+        var rows = d.records ? d.records.rows : d.result_rows[0].records.rows;
+        rows.unshift({name: '..', isdir: true});
+        render_list(rows, document);
+      })
+      .catch(function(e) {
+        debugger;
+      })
 </script>
 </body>
 </html>
