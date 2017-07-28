@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+  <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
+  <script>QUnit.config.autostart = false;</script>
+
+  <script type="text/javascript" src="//www.rdbhost.com/vendor/rdbhost/2.2/vendor/labjs/LAB.js"></script>
+  <script>
+    var $L = $LAB
+        .script('https://www.rdbhost.com/vendor/rdbhost/2.2/lib/js/util-bundle;rdbhost.js').wait(
+            function() {
+
+              if ( !Rdbhost.featuredetects.hasPromises() )
+                $L = $L.script('https://www.rdbhost.com/vendor/rdbhost/2.2/vendor/es6-promises/dist/es6-promise.js');
+              if ( !Rdbhost.featuredetects.hasFetch() )
+                $L = $L.script('https://www.rdbhost.com/vendor/rdbhost/2.2/vendor/fetch/fetch.js').wait();
+
+              $L = $L.script('https://www.rdbhost.com/vendor/rdbhost/2.2/lib/js/rdb2-livereload.js');
+
+              $L.script('tests.js').wait(function() { QUnit.start(); } );
+            });
+
+  </script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
