@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Charge</title>
+  <title>Chat</title>
 
   <style>
     * {
       box-sizing: border-box;
       font-family: sans-serif;
       color: #333;
-      margin: 0; 
+      margin: 0;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -65,7 +65,7 @@
 
     div.form textarea {
       display: block;
-      width: 300px;
+      width: 400px;
       height: 8em;
       padding: 5px;
       -webkit-appearance: none;
@@ -76,7 +76,7 @@
 
     div.form input {
       display: block;
-      width: 300px;
+      width: 400px;
       padding: 5px;
       -webkit-appearance: none;
       border: 1px solid #333;
@@ -110,18 +110,19 @@
       width: 100%;
       border-radius: 8px;
       border-collapse: collapse;
-
-      border: 1px solid;
     }
 
-    td, th {
+    table, td, th {
       border: none;
+    }
+
+    table td {
       padding: 10px;
-      /* border-bottom: 1px solid #f4f4f4; */
+      border-bottom: 1px solid #f4f4f4;
     }
 
     table td:last-child {
-      text-align: right;
+      text-align: left;
     }
 
     table th {
@@ -142,7 +143,7 @@
       border-radius: 8px;
       box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
     }
-    
+
     #close-pay, #close-result, #close-refund {
       float: right;
       height: 25px;
@@ -152,7 +153,7 @@
       line-height: 25px;
       border-radius: 50%;
     }
-    
+
   </style>
 
 </head>
@@ -173,128 +174,39 @@
           }
       );
   $L = $L.script('//'+HOST+'/2.2/lib/js/rdb2-livereload.js')
-      .script('//'+HOST+'/2.2/lib/js/rdb2-charge.js');
+      .script('//'+HOST+'/2.2/lib/js/rdb2-emailing.js');
 </script>
 
 <div class="main">
 
-  <h2 class="title">Simplified Order Form, for Credit-Card Operations.</h2>
+  <h2 class="title">Real-Time Chat Demonstration.</h2>
 
   <div class="advice">
-    <h4>Test Card Numbers</h4>
-    
-    <p>The Stripe.Com account used here is a test account, so only test card numbers can be used.
-      Use one of these, or see a more complete list at <a href="https://stripe.com/docs/testing#cards">Stripe</a>.
-      Use a future expiration date for success, past for failure.</p>
-    
-    <h5>Good Numbers</h5>
-    
-    <ul>
-      <li>4242 4242 4242 4242</li>
-      <li>5555 5555 5555 4444</li>
-    </ul>
-    
-    <h5>Bad Numbers</h5>
-    <ul>
-      <li>4000 0000 0000 0101</li>
-      <li>4000 0000 0000 0002</li>
-    </ul>
+    <p>The RdbHost Platform features real-time asynchronous communications via websocket.</p>
+    <p>Public and Private:
+      <ol>
+        <li>To send publicly, type into form.</li>
+        <li>To send private message, prefix message with /&lt;id&gt;.</li>
+      </ol>
+    </p>
   </div>
-  <section>
-    <h3>Unpaid orders</h3>
-
-    <table id="unpaid" frame="box">
-      <thead>
-      <tr>
-        <th>id</th>
-        <th>items</th>
-        <th>price</th>
-        <th>-</th>
-      </tr>
-      </thead>
-
-      <tbody>
-      <tr>
-        <td>{{id}}</td>
-        <td>{{desc}}</td>
-        <td class="ralign">$&nbsp;{{price}}</td>
-        <td>
-          <button class="pay">Pay</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-  </section>
-
-  <p></p>
-  <section>
-    <button id="new-order">Create New Order</button>
-  </section>
-
-  <section>
-    <h3>Paid Orders</h3>
-
-    <table id="paid" frame="box">
-      <thead>
-      <tr>
-        <th>id</th>
-        <th>items</th>
-        <th>price</th>
-        <th>confirm code</th>
-        <th>-</th>
-      </tr>
-      </thead>
-
-      <tbody>
-      <tr>
-        <td>{{id}}</td>
-        <td>{{desc}}</td>
-        <td class="ralign">$&nbsp;{{price}}</td>
-        <td>{{confirm}}</td>
-        <td>
-          <button class="refund">Refund</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-
-  </section>
 
   <p> &nbsp; </p>
+
+  <div class="form">&nbsp;Say something!
+  </div>
+
+  <p> </p>
+
+  <div class="form">
+    <input id="speak" name="speak" placeholder="hi..." />
+    <button id="send">Send</button>
+  </div>
+
 </div>
-<div style="display:none" id="pay-popup" frame="box">
-  <button id="close-pay">x</button><br/>
-  <h4>Pay for Order</h4>
 
-  Order: <span class="order-num"></span><br/>
-  Price: $<span class="price"></span>
-  <input id="price" name="price" type="hidden">
-  <input id="order-num" name="order-num" type="hidden"><br/>
-
-  <span class="pay-error-msg"></span>
-
-  <input id="cc_num" name="cc_num" size="20"><br/>
-  <input id="cc_mon" name="cc_mon" size="2">
-  <input id="cc_yr" name="cc_yr" size="2">
-  <input id="cc_cvc" name="cc_cvc" size="3"><br/>
-
-  <button id="pay-order">Pay for Order</button>
-</div>
-<div style="display:none" id="refund-popup" frame="box">
-  <button id="close-refund">x</button><br/>
-  <h4>Refund Charge</h4>
-
-  Amount: $<span class="price"></span>
-  <input id="refund-amt" name="refund-amt" type="hidden"><br/>
-
-  <span class="refund-error-msg"></span>
-  <input id="confirm-code" name="confirm-code" size="20"><br/>
-
-  <button id="refund-charge">Refund the Charge</button>
-</div>
 <div style="display:none" id="result-popup" frame="box">
-  <button id="close-result">x</button><br/>
+  <button id="close-result">x</button>
   <h4>Result</h4>
 
   <span class="message"></span>
@@ -302,218 +214,88 @@
 
 
 <script>
+
   $L = $L.wait(function () {
 
+    var $popup = $('#result-popup');
     var DB_HOST = window.location.href.indexOf('devd') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
 
-      // setup connection to database
+    // setup connection to database
     Rdbhost.connect(DB_HOST, 14);
     var preauthRef = Rdbhost.preauth();
     Rdbhost.activate_reloader(preauthRef.clone());
 
+    $(document).on('click', '#send', function(evt) {
+      /* on Send  click,  get line and send    */
+      var line = $('#speak').val(),
+          $err = $('#err0');
+      $err.empty();
 
-    $(document).on('click', '.pay', function(evt) {
-      /* on order pay-button click, show and populate
-        cc form.
-      */
+      var preauth = Rdbhost.preauth();
+      var p = preauth
+          .query('SELECT ')
+          .params([jokeId])
+          .get_data();
 
-      var $idTd = $(evt.target).closest('tr').find('td').first(),
-          order_id = $idTd.text(),
-          $priceTd = $(evt.target).closest('tr').find('td:nth-child(3)'),
-          price = $priceTd.text();
+      p.then(function(d) {
+        var suc = d.result_sets[0].records.rows;
+        if (suc && suc[0].result.toLowerCase() === 'success') {
 
-      $('#pay-popup .order-num').text(order_id);
-      $('#pay-popup .pay-error-msg').text('');
-      $('#pay-popup .price').text(price);
-      $('#price').val(price);
-      $('#order-num').val(order_id);
-      $('#cc_num').val('');
-      $('#cc_yr').val('');
-      $('#cc_mon').val('');
-      $('#cc_cvc').val('');
-
-      $('#pay-popup').show();
-    });
-
-    $('#close-pay').click(function(evt) {
-      // close pay popup
-      $('#pay-popup').hide();
-    });
-
-    $('#pay-order').click(function(evt) {
-
-      /* on pay-form submit, pull cc data and order id from pay form, submit to server
-         handle error if any, reload tables on success.
-      */
-
-      var price = $('#price').val(),
-          order_id = $('#order-num').val(),
-          cc_num = $('#cc_num').val(),
-          cc_exp_mon = $('#cc_mon').val(),
-          cc_exp_yr = $('#cc_yr').val(),
-          cc_cvc = $('#cc_cvc').val();
-
-      if ( !cc_num || !cc_exp_mon || !cc_exp_yr || !cc_cvc )
-        return;
-
-      var preauth = Rdbhost.Charge.preauth();
-      var pr = preauth
-          .query("SELECT id AS idx, (price*100)::INT AS amount, items AS description \
-        FROM orders WHERE id = %(order)s")
-          .params({'order': order_id})
-          .charge(cc_num, cc_cvc, cc_exp_mon, cc_exp_yr);
-
-      pr.then(function (d) {
-            $('#pay-popup').hide();
-            var res = d.result_sets[0].records.rows[0].result;
-            $('#result-popup .message').text(res);
-            $('#result-popup').show();
-            load_orders();
-          })
+          $popup.find('.message').html('Success');
+          $popup.show();
+        }
+        else {
+          $popup.find('.message').html('no message sent');
+          $popup.show();
+        }
+      })
           .catch(function(e) {
-            $('#pay-popup .pay-error-msg').text(e.message);
-          });
-    });
-
-    $(document).on('click', '.refund', function(evt) {
-      /* on paid-order refund-button click,
-        show and populate refund form.
-      */
-
-      var $confirmTd = $(evt.target).closest('tr').find('td:nth-child(4)').first(),
-          confirmCode = $confirmTd.text(),
-          $priceTd = $(evt.target).closest('tr').find('td:nth-child(3)'),
-          price = $priceTd.text();
-
-      $('#refund-popup .pay-error-msg').text('');
-      $('#refund-popup .price').text(price);
-      $('#refund-amt').val(price);
-      $('#confirm-code').val(confirmCode);
-
-      $('#refund-popup').show();
-    });
-
-    $('#close-refund').click(function(evt) {
-      // close refund form
-      $('#refund-popup').hide();
-    });
-
-    $('#refund-charge').click(function(evt) {
-      /* on refund-form submit, get data from form, submit request to server,
-         handle error if any, reshow tables on success
-      */
-      var price = $('#price').val(),
-          confirm_code = $('#confirm-code').val();
-
-      var preauth = Rdbhost.Charge.preauth();
-      var pr = preauth
-          .query("SELECT c.idx AS idx, c.id AS id, c.amount AS amount \
-        FROM charges c WHERE id = %(confirm_code)s")
-          .params({'confirm_code': confirm_code})
-          .refund();
-
-      pr.then(function (d) {
-            $('#refund-popup').hide();
-            var res = d.result_sets[0].records.rows;
-            if ( !res )
-              $('#result-popup .message').text('Charge not found');
-            else
-              $('#result-popup .message').text(res[0].result);
-            $('#result-popup').show();
-            load_orders();
+            $popup.find('.message').html(e.message);
+            $popup.show();
           })
-          .catch(function(e) {
-            $('#refund-popup .pay-error-msg').text(e.message);
-          });
     });
 
-    $('#new-order').click(function() {
-      /* add new unpaid order to orders db, from random source
-      */
-      var q = 'INSERT INTO orders (items, price) SELECT "desc", price \n' +
-              '    FROM order_elements ORDER BY random() LIMIT 1;';
-      var preauth = preauthRef.clone(),
-          pr = preauth.query(q).get_data();
-      pr.then(function(d) {
-        load_orders();
-      });
-    });
     $('#close-result').click(function(evt) {
-      $('#result-popup').hide();
+      $popup.find('.message').text('');
+      $popup.hide();
     });
 
 
-    function prep_table(id) {
-      /* extract reusable items from html table, for use in rendering tables with data.
-      */
-      var $tbl = $('#' + id),
-          $th = $tbl.find('tr').first().remove(),
-          $tr = $tbl.find('tr').first();
-      return {
-        '$table': $tbl,
-        '$th': $th,
-        'tpl': $tr[0].outerHTML
-      }
-    }
+    function load_recent_lines() {
 
-    var unPaidTblData = prep_table('unpaid');
-    var paidTblData = prep_table('paid');
-
-    function load_orders() {
-      /*  pull order data from server, to pupulate two order tables.
-       */
-      var q =  'SELECT o.id, o.items, o.price \n' +
-               '  FROM orders o LEFT JOIN unrefunded_charges c ON (o.id::VARCHAR = c.idx)\n' +
-               ' WHERE (c.paid IS NULL OR NOT c.paid);\n' +
-               'SELECT o.id, o.items, o.price, c.id AS confirm \n' +
-               '  FROM orders o JOIN unrefunded_charges c ON (o.id::VARCHAR = c.idx AND c.paid);\n';
+      /*  pull chat data from server, to populate two order tables.  */
+      var q = 'SELECT j.idx, j.joke  FROM email.sql_jokes j ORDER BY random() LIMIT 1;';
 
       var preauth = preauthRef.clone(),
           pr = preauth.query(q).get_data();
 
       pr.then(function (d) {
 
-        var unpaid = d.result_sets[0].records,
-            paid = d.result_sets[1].records,
-            row, up, p;
+        var jokes = d.result_sets[0],
+            row, j, p;
 
-        // populate unpaid-orders html table with server data
-        unPaidTblData.$table.empty();
-        unPaidTblData.$table.append(unPaidTblData.$th);
+        // populate jokes-orders html table with server data
+        jokeTableData.$table.empty();
+        jokeTableData.$table.append(jokeTableData.$th);
 
-        for (var _up in unpaid.rows) {
-          if (!unpaid.rows.hasOwnProperty(_up))
+        for (var _j in jokes.records.rows) {
+          if (!jokes.records.rows.hasOwnProperty(_j))
             continue;
-          up = unpaid.rows[_up];
-          row = unPaidTblData.tpl.replace('{{id}}', up.id).replace('{{desc}}', up.items)
-              .replace('{{price}}', up.price);
-          unPaidTblData.$table.append(row);
+          j = jokes.records.rows[_j];
+          row = jokeTableData.tpl.replace('{{idx}}', j.idx).replace('{{joke}}', j.joke);
+          jokeTableData.$table.append(row);
         }
-        unPaidTblData.$table.show();
-
-        // populate paid-orders html table with server data
-        paidTblData.$table.empty();
-        paidTblData.$table.append(paidTblData.$th);
-
-        for (var _p in paid.rows) {
-          if (!paid.rows.hasOwnProperty(_p))
-            continue;
-          p = paid.rows[_p];
-          row = paidTblData.tpl.replace('{{id}}', p.id).replace('{{desc}}', p.items)
-              .replace('{{price}}', p.price).replace('{{confirm}}', p.confirm);
-          paidTblData.$table.append(row);
-        }
-        paidTblData.$table.show();
+        jokeTableData.$table.show();
 
       })
-      .catch(function (e) {
-        debugger;
-      })
+          .catch(function (e) {
+            debugger;
+          })
 
     }
 
     // initial load of table data
-    load_orders();
+    load_recent_lines();
   });
 </script>
 </body>
