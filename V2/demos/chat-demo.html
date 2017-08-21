@@ -22,6 +22,16 @@
       margin: 30px 0;
     }
 
+    span.tstamp {
+      display: inline-block;
+      width: 140px;
+    }
+    span.usr {
+      display: inline-block;
+      width: 120px;
+      float: right;
+    }
+
     div.advice {
       background-color: #fff;
       border: 1px solid #333;
@@ -30,16 +40,8 @@
       padding: 20px;
     }
 
-    .advice h4 {
-      margin-bottom: 20px;
-    }
-
     .advice p {
       margin-bottom: 20px;
-    }
-
-    .advice h5 {
-      margin-bottom: 10px;
     }
 
     .advice ul, .advice ol {
@@ -144,7 +146,7 @@
       box-shadow: 0 0 10px 0 rgba(0,0,0,0.3);
     }
 
-    #close-pay, #close-result, #close-refund {
+    #close-result {
       float: right;
       height: 25px;
       width: 25px;
@@ -152,6 +154,11 @@
       padding: 0;
       line-height: 25px;
       border-radius: 50%;
+    }
+
+    div.msg_hdr span {
+      font-weight: bold;
+      margin-bottom: 8px;
     }
 
   </style>
@@ -173,8 +180,8 @@
               $L = $L.script('//'+HOST+'/2.2/vendor/fetch/fetch.js').wait();
           }
       );
-  $L = $L.script('//'+HOST+'/2.2/lib/js/rdb2-livereload.js')
-      .script('//'+HOST+'/2.2/lib/js/rdb2-emailing.js');
+  $L = $L.script('//'+HOST+'/2.2/lib/js/rdb2-livereload.js');
+  $L = $L.script('//www.rdbhost.com/vendor/moment/2.7/moment.min.js');
 </script>
 
 <div class="main">
@@ -183,21 +190,28 @@
 
   <div class="advice">
     <p>The RdbHost Platform features real-time asynchronous communications via websocket.</p>
-    <p>Public and Private:
       <ol>
-        <li>To send publicly, type into form.</li>
-        <li>To send private message, prefix message with /&lt;id&gt;.</li>
+        <li>To send publicly, type into form, click send.</li>
+        <li>It can be useful to open this demo in two browsers, so you can update one from the other.</li>
+        <li>This <b>simple</b> demo tracks user by IP, so both browsers will be the same <i>user</i>.</li>
       </ol>
-    </p>
   </div>
 
   <p> &nbsp; </p>
 
-  <div class="form">&nbsp;Say something!
+  <!-- display for recent messages.  every message received is added. -->
+  <div class="form" id="messages">
+    <div class="msg_hdr">
+      <span class="tstamp">Posted</span> <span>Message</span> <span class="usr">Who</span>
+    </div>
+    <div class="msg_row">
+      <span class="tstamp" data-val="{{tstamp}}">{{moment}}</span> <span>{{message}}</span> <span class="usr">{{usr}}</span>
+    </div>
   </div>
 
   <p> </p>
 
+  <!-- one line form, for message to send -->
   <div class="form">
     <input id="speak" name="speak" placeholder="hi..." />
     <button id="send">Send</button>
@@ -205,6 +219,7 @@
 
 </div>
 
+<!-- popup for error messages -->
 <div style="display:none" id="result-popup" frame="box">
   <button id="close-result">x</button>
   <h4>Result</h4>
@@ -215,7 +230,23 @@
 
 <script>
 
+  function prep_output(id) {
+    /* extract reusable items from output div, for use in rendering output with data.
+     */
+    var $output = $('#' + id),
+        $outputHdr = $output.find('div').first().remove(),
+        $outputRow = $output.find('div').first();
+    return {
+      '$output': $output,
+      '$outputHdr': $outputHdr,
+      'tpl': $outputRow[0].outerHTML
+    }
+  }
+
   $L = $L.wait(function () {
+
+    // gather template info for output
+    var chatterDisplayData = prep_output('messages');
 
     var $popup = $('#result-popup');
     var DB_HOST = window.location.href.indexOf('devd') > -1 ? 'dev.rdbhost.com' : 'www.rdbhost.com';
@@ -225,74 +256,150 @@
     var preauthRef = Rdbhost.preauth();
     Rdbhost.activate_reloader(preauthRef.clone());
 
+
+    /* on Send  click,  get line and send    */
     $(document).on('click', '#send', function(evt) {
-      /* on Send  click,  get line and send    */
-      var line = $('#speak').val(),
+
+      var $line = $('#speak'),
+          line = $line.val(),
           $err = $('#err0');
       $err.empty();
+      $line.val('');
 
-      var preauth = Rdbhost.preauth();
+      /* the .listen() method adds LISTEN statements to query.
+       *  this query inserts a new line into table, and purges old lines.
+       *  a previously prepared trigger will run a NOTIFY to broadcast the message
+       */
+      var preauth = Rdbhost.preauth().listen('publik');
       var p = preauth
-          .query('SELECT ')
-          .params([jokeId])
+          .query('INSERT INTO realtime.chat (usr, tstamp, message) VALUES(%[REMOTE_ADDR]s, now(), %s); \n' +
+                 'DELETE FROM realtime.chat WHERE now() - tstamp::timestamp > \'60 minutes\'::interval;' )
+          .params([line])
           .get_data();
 
       p.then(function(d) {
-        var suc = d.result_sets[0].records.rows;
-        if (suc && suc[0].result.toLowerCase() === 'success') {
-
-          $popup.find('.message').html('Success');
-          $popup.show();
-        }
-        else {
-          $popup.find('.message').html('no message sent');
-          $popup.show();
-        }
-      })
+            var suc = d.status[1];
+            if (suc.toLowerCase() !== 'ok') {
+              $popup.find('.message').html('no message sent');
+              $popup.show();
+            }
+            else
+              console.log('message sent');
+          })
           .catch(function(e) {
             $popup.find('.message').html(e.message);
             $popup.show();
           })
     });
 
+    /* click handler to close message popup */
     $('#close-result').click(function(evt) {
       $popup.find('.message').text('');
       $popup.hide();
     });
 
+    /* render a new line to the output panel, from record m
+     */
+    function render_new_line(chatterDisplayData, m) {
+
+      if (m.tstamp.indexOf(' ') >= 0) {
+        m.tstamp = m.tstamp.replace(' ', 'T')+':00';
+      }
+
+      // row is rendered with hidden timestamp, and visible time-ago indicator from moment.js
+      var row = chatterDisplayData.tpl.replace('{{moment}}', moment(m.tstamp).fromNow())
+          .replace('{{tstamp}}', m.tstamp)
+          .replace('{{usr}}', m.usr)
+          .replace('{{message}}', m.message);
+      chatterDisplayData.$output.append(row);
+    }
+
+    /* prune old lines from output panel
+     */
+    function prune_old_lines(chatterDisplayData) {
+
+      while (true) {
+
+        var $mrows = chatterDisplayData.$output.find('.msg_row');
+        if ($mrows.length === 0)
+          break;
+
+        var t = $mrows.first().find('.tstamp').attr('data-val'),
+            td = moment().unix() - moment(t).unix();
+        if (td < 3600)
+          break;
+
+        $mrows.first().remove();
+      }
+    }
 
     function load_recent_lines() {
 
-      /*  pull chat data from server, to populate two order tables.  */
-      var q = 'SELECT j.idx, j.joke  FROM email.sql_jokes j ORDER BY random() LIMIT 1;';
+      /*  pull chat data from server, to populate chat output form.
+      *     the NOTIFY line, in combination with the .listen() method,
+      *     registers this client on the 'publik' channel.  You register a client
+      *     by sending yourself a message on that channel, so we send ourselves a ''
+      *     message
+      */
+      var q = 'SELECT r.usr, r.message, r.tstamp  FROM realtime.chat r \n' +
+              ' WHERE now() - r.tstamp::timestamp < \'60 minutes\'::interval ORDER BY r.tstamp DESC; \n' +
+              'NOTIFY publik, \'\'; \n';
 
-      var preauth = preauthRef.clone(),
-          pr = preauth.query(q).get_data();
+      var pr = preauthRef.clone()
+              .listen('publik')
+              .query(q)
+              .get_data();
 
       pr.then(function (d) {
 
-        var jokes = d.result_sets[0],
-            row, j, p;
+            var messages = d.result_sets[0],
+                m, p;
 
-        // populate jokes-orders html table with server data
-        jokeTableData.$table.empty();
-        jokeTableData.$table.append(jokeTableData.$th);
+            // populate chat display box with server data
+            chatterDisplayData.$output.empty();
+            chatterDisplayData.$output.append(chatterDisplayData.$outputHdr);
 
-        for (var _j in jokes.records.rows) {
-          if (!jokes.records.rows.hasOwnProperty(_j))
-            continue;
-          j = jokes.records.rows[_j];
-          row = jokeTableData.tpl.replace('{{idx}}', j.idx).replace('{{joke}}', j.joke);
-          jokeTableData.$table.append(row);
-        }
-        jokeTableData.$table.show();
+            if (messages.row_count[0] === 0)
+              return;
 
-      })
+            if (messages.records.rows.length) {
+              messages.records.rows = messages.records.rows.reverse();
+            }
+
+            for (var _m in messages.records.rows) {
+
+              if (!messages.records.rows.hasOwnProperty(_m))
+                continue;
+              m = messages.records.rows[_m];
+
+              render_new_line(chatterDisplayData, m);
+            }
+
+            chatterDisplayData.$output.show();
+          })
           .catch(function (e) {
             debugger;
           })
-
     }
+
+    /* register an .on() handler to handle notify messages pushed down the
+     *   websocket connection.   See the bottom of this file for the SQL that setup
+     *   the server resources.
+     */
+    Rdbhost.on('notify-received:publik', function(channel, payload) {
+
+      var m;
+      // payload is assumed to be a json string
+      try {
+        m = JSON.parse(payload);
+      }
+      catch (e) {
+        m = {message: e.message, usr: '-unknown-', tstamp: undefined}
+      }
+      render_new_line(chatterDisplayData, m);
+
+      prune_old_lines(chatterDisplayData);
+    });
 
     // initial load of table data
     load_recent_lines();
@@ -300,3 +407,61 @@
 </script>
 </body>
 </html>
+<!--
+
+The following sql was executed in the account, to create server side tables and functions.   The app
+is hosted in account 14, and s0000000014 is the super role, and p0000000014 is the preauth role there.
+
+
+function chat_notify_sender is a trigger function that packs the columns of the new record into a json object, and
+   sends it as the NOTIFY payload, so it gets transmitted to all clients listening.  'publik' is the channel name.
+
+--
+-- Name: chat; Type: TABLE; Schema: realtime; Owner: s0000000014; Tablespace:
+--
+
+CREATE TABLE realtime.chat (
+    usr character varying NOT NULL,
+    message character varying NOT NULL,
+    tstamp timestamp with time zone
+);
+
+
+ALTER TABLE realtime.chat OWNER TO s0000000014;
+
+
+--
+-- Name: chat; Type: ACL; Schema: realtime; Owner: s0000000014
+--
+
+REVOKE ALL ON TABLE chat FROM PUBLIC;
+GRANT ALL ON TABLE chat TO s0000000014;
+GRANT SELECT,INSERT,TRIGGER,UPDATE ON TABLE chat TO r0000000014;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE chat TO p0000000014;
+
+
+--
+-- Name: chat_notify_sender(); Type: FUNCTION; Schema: realtime; Owner: s0000000014
+--
+
+CREATE FUNCTION chat_notify_sender() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+ PERFORM pg_notify('publik'::varchar, row_to_json(_q)::text) FROM (SELECT NEW.usr AS usr, NEW.tstamp AS tstamp, NEW.message AS message) AS _q;
+ RETURN NULL;
+END;
+$$;
+
+
+ALTER FUNCTION realtime.chat_notify_sender() OWNER TO s0000000014;
+
+
+--
+-- Name: rtchat; Type: TRIGGER; Schema: realtime; Owner: s0000000014
+--
+
+CREATE TRIGGER rtchat AFTER INSERT ON chat FOR EACH ROW EXECUTE PROCEDURE chat_notify_sender();
+
+
+-->
